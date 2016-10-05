@@ -1,0 +1,59 @@
+﻿<meta http-equiv="refresh" content="5">
+
+@model Connect4.Models.Game
+
+@switch (Model.CurrentState)
+{
+    case Connect4.Models.GameState.GameNotStarted:
+        <h1>Current State: Not Started</h1>
+        break;
+    case Connect4.Models.GameState.RedWon:
+        <h1>Current State: Red Won</h1>
+        break;
+    case Connect4.Models.GameState.YellowWon:
+        <h1>Current State: Yellow Won</h1>
+        break;
+    case Connect4.Models.GameState.RedToPlay:
+        <h1>Current State: Red to Play</h1>
+        break;
+    case Connect4.Models.GameState.YellowToPlay:
+        <h1>Current State: Yellow to Play</h1>
+        break;
+    case Connect4.Models.GameState.Draw:
+        <h1>Current State: Draw</h1>
+        break;
+}
+
+<h1>Red Player: @ViewData["RedPlayer"]</h1>
+<h1>Yellow Player: @ViewData["YellowPlayer"]</h1>
+
+<table class="table" style="border:none" width="980">
+
+    @for (int rowNumber = Connect4.Models.Game.NUMBER_OF_ROWS - 1; rowNumber >= 0; rowNumber--)
+    {
+        <tr>
+            @for (int columnNumber = 0; columnNumber < Connect4.Models.Game.NUMBER_OF_COLUMNS; columnNumber++)
+            {
+                <td width="140">
+                    @switch (Model.Cells[columnNumber, rowNumber])
+                    {
+                        case Connect4.Models.CellContent.Empty:
+                            <img src="~/Content/empty.bmp" width="140" height="140" />
+                            break;
+                        case Connect4.Models.CellContent.Red:
+                            <img src="~/Content/red.bmp" width="140" height="140" />
+                            break;
+                        case Connect4.Models.CellContent.Yellow:
+                            <img src="~/Content/yellow.bmp" width="140" height="140" />
+                            break;
+                        default:
+                            break;
+                    }
+
+                </td>
+            }
+        </tr>
+    }
+
+
+</table>

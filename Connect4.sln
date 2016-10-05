@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4", "Connect4\Connec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4.Tests", "Connect4.Tests\Connect4.Tests.csproj", "{77D6BF03-626E-42BC-A522-FA763165D401}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Connect4Database", "Connect4Database\Connect4Database.sqlproj", "{448B24FE-B8F2-4EA8-BECA-8329619707D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4.ExampleBot", "Connect4.ExampleBot\Connect4.ExampleBot.csproj", "{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,16 @@ Global
 		{77D6BF03-626E-42BC-A522-FA763165D401}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77D6BF03-626E-42BC-A522-FA763165D401}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77D6BF03-626E-42BC-A522-FA763165D401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{448B24FE-B8F2-4EA8-BECA-8329619707D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{448B24FE-B8F2-4EA8-BECA-8329619707D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{448B24FE-B8F2-4EA8-BECA-8329619707D7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{448B24FE-B8F2-4EA8-BECA-8329619707D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{448B24FE-B8F2-4EA8-BECA-8329619707D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{448B24FE-B8F2-4EA8-BECA-8329619707D7}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,8 @@
+﻿CREATE PROCEDURE [dbo].[usp_DeleteGame](@ID AS UNIQUEIDENTIFIER) AS 
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE FROM dbo.Game
+	      WHERE GUID = @ID
+
+END
