@@ -7,7 +7,7 @@ using Connect4.Properties;
 
 namespace Connect4
 {
-    internal class Database
+    public class Database
     {
         public async Task<Player> LoadPlayer(Guid playerID)
         {

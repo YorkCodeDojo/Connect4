@@ -31,6 +31,7 @@ namespace Connect4.ExampleBot
             var playerID = API.RegisterTeam(teamName, teamPassword, serverURL);
             Console.WriteLine($"PlayerID is {playerID}");
 
+
             // This is the main game loop
             var gameIsComplete = false;
             while (!gameIsComplete)

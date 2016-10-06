@@ -77,4 +77,7 @@
   <ItemGroup>
     <PostDeploy Include="ConfigureSystemBots.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Reset.sql" />
+  </ItemGroup>
 </Project>

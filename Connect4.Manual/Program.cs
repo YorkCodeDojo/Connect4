@@ -11,12 +11,14 @@ namespace Connect4.ExampleBot
         private const string teamPassword = "MyPassword";
 
         // The location of the game server
-        private const string serverURL = "http://yorkdojoconnect4.azurewebsites.net/";
+        //private const string serverURL = "http://yorkdojoconnect4.azurewebsites.net/";
+        private const string serverURL = "http://localhost:55011/";
 
         private static void MakeMove(Game game, Guid playerID, string serverURL)
         {
 
             // Display the board
+            var currentColor = Console.ForegroundColor;
             Console.WriteLine("");
             for (int row = Game.NUMBER_OF_ROWS - 1; row >= 0; row--)
             {
@@ -28,10 +30,14 @@ namespace Connect4.ExampleBot
                             Console.Write("0");
                             break;
                         case CellContent.Red:
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.Write("R");
+                            Console.ForegroundColor = currentColor;
                             break;
                         case CellContent.Yellow:
+                            Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.Write("Y");
+                            Console.ForegroundColor = currentColor;
                             break;
                         default:
                             break;
@@ -41,8 +47,13 @@ namespace Connect4.ExampleBot
             }
             Console.WriteLine("");
 
-            Console.WriteLine("Enter the column number");
+            if (game.RedPlayerID == playerID)
+                Console.ForegroundColor = ConsoleColor.Red;
+            else
+                Console.ForegroundColor = ConsoleColor.Yellow;
 
+            Console.WriteLine("Enter the column number");
+            Console.ForegroundColor = currentColor;
             var c = -1;
             while (c == -1)
             {
@@ -92,7 +103,7 @@ namespace Connect4.ExampleBot
                             {
                                 Console.WriteLine(e.Message);
                             }
-                            
+
                         }
                         break;
 
