@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Web.Http;
+using Connect4.Bots;
 using Connect4.Models;
 using Connect4.Properties;
 
@@ -12,7 +13,6 @@ namespace Connect4.Controllers
     public class GameController : ApiController
     {
         // Well known player IDs
-        private Guid FillUpBot = new Guid("48D72B2C-C4CE-43F4-9153-55C28E75CBEA");
 
         private readonly Database database;
         public GameController()
@@ -61,15 +61,20 @@ namespace Connect4.Controllers
 
                 // Set up a new game,  but they are planning the other player
                 var newGame = new Game();
+                newGame.ID = Guid.NewGuid();
                 newGame.YellowPlayerID = currentGame.RedPlayerID;
                 newGame.RedPlayerID = currentGame.YellowPlayerID;
 
-                if ((newGame.RedToPlay() && newGame.RedPlayerID == Bots.RandomBot.GUID) ||
-                    (newGame.YellowToPlay() && newGame.YellowPlayerID == Bots.RandomBot.GUID))
+                // Is the player playing against our bot?  Yellow goes first.
+                var otherPlayerID = (newGame.RedPlayerID == playerID) ? newGame.YellowPlayerID : newGame.RedPlayerID;
+                if (otherPlayerID == newGame.YellowPlayerID)
                 {
-                    // Yellow goes first.
-                    var bot = new Bots.RandomBot();
-                    bot.MakeMove(newGame);
+                    var otherPlayer = await database.LoadPlayer(otherPlayerID);
+                    if (otherPlayer.SystemBot)
+                    {
+                        var bot = BaseBot.GetBot(otherPlayerID);
+                        bot.MakeMove(newGame);
+                    }
                 }
 
                 using (var tx = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -164,10 +169,11 @@ namespace Connect4.Controllers
             await database.SaveGame(game);
 
             // Is the player playing against our bot?
-            if ((game.RedToPlay() && game.RedPlayerID == Bots.RandomBot.GUID) ||
-                (game.YellowToPlay() && game.YellowPlayerID == Bots.RandomBot.GUID))
+            var otherPlayerID = (game.RedPlayerID == playerID) ? game.YellowPlayerID : game.RedPlayerID;
+            var otherPlayer = await database.LoadPlayer(otherPlayerID);
+            if (otherPlayer.SystemBot)
             {
-                var bot = new Bots.RandomBot();
+                var bot = BaseBot.GetBot(otherPlayerID);
                 bot.MakeMove(game);
                 await database.SaveGame(game);
             }

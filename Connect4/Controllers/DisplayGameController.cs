@@ -30,14 +30,9 @@ namespace Connect4.Controllers
 
         private async Task<string> GetPlayerName(Guid playerID)
         {
-            if (playerID == Bots.RandomBot.GUID)
-                return "Random Bot";
-            else
-            {
-                var player =await this.database.LoadPlayer(playerID);
-                if (player == null) return "Unknown";
-                return player.Name;
-            }
+            var player = await this.database.LoadPlayer(playerID);
+            if (player == null) return "Unknown";
+            return player.Name;
         }
     }
 }

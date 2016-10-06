@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Connect4.Bots;
 using Connect4.Models;
 using Connect4.ViewModels;
 
@@ -27,8 +28,17 @@ namespace Connect4.Controllers
             if (thisPlayer == null) return RedirectToAction("Index", "Home");
 
             var game = new Game();
+            game.ID = Guid.NewGuid();
             game.YellowPlayerID = model.OtherPlayerID.Value;
             game.RedPlayerID = thisPlayer.ID;
+
+            var otherPlayer = await database.LoadPlayer(model.OtherPlayerID.Value);
+            if (otherPlayer.SystemBot)
+            {
+                var bot = BaseBot.GetBot(model.OtherPlayerID.Value);
+                bot.MakeMove(game);
+            }
+
             await this.database.SaveGame(game);
 
             return RedirectToAction("Index", "DisplayGame", new { gameID = game.ID });

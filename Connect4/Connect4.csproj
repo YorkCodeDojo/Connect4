@@ -206,6 +206,8 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Bots\BaseBot.cs" />
+    <Compile Include="Bots\FillUpBot.cs" />
     <Compile Include="Bots\RandomBot.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ChangeGameController.cs" />

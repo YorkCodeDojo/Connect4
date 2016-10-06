@@ -6,7 +6,7 @@ namespace Connect4.Bots
     /// <summary>
     /// This bot plays completely at random
     /// </summary>
-    public class RandomBot
+    public class RandomBot : BaseBot
     {
         public static Guid GUID = new Guid("A05BF67C-2BBB-4243-BF18-FE60C52CF4F9");
 
@@ -14,7 +14,7 @@ namespace Connect4.Bots
         /// Make our move and return the amended game
         /// </summary>
         /// <param name="game"></param>
-        internal void MakeMove(Game game)
+        internal override void MakeMove(Game game)
         {
             // Are we playing as yellow?
             var isYellow = (game.YellowPlayerID == RandomBot.GUID);
