@@ -1,0 +1,9 @@
+﻿Background images
+Make board smaller
+Code up some bots
+Document API
+Pyhthon versions
+Andy & Chris
+Check In
+Deploy to Azure
+Handouts

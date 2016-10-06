@@ -5,7 +5,7 @@ namespace Connect4.ExampleBot
     class Program
     {
         // Put the name of your team here
-        private const string teamName = "David's Super Stars";
+        private const string teamName = "Manual Console";
 
         // and a password for your team here.  This is to prevent cheating!
         private const string teamPassword = "MyPassword";
@@ -15,11 +15,43 @@ namespace Connect4.ExampleBot
 
         private static void MakeMove(Game game, Guid playerID, string serverURL)
         {
-            // PUT YOUR CODE IN HERE
-            API.MakeMove(playerID, serverURL, 0);  //Place a counter in the first column
 
-            Console.WriteLine("Press to play");
-            Console.ReadKey(true);
+            // Display the board
+            Console.WriteLine("");
+            for (int row = Game.NUMBER_OF_ROWS - 1; row >= 0; row--)
+            {
+                for (int column = 0; column < Game.NUMBER_OF_COLUMNS; column++)
+                {
+                    switch (game.Cells[column, row])
+                    {
+                        case CellContent.Empty:
+                            Console.Write("0");
+                            break;
+                        case CellContent.Red:
+                            Console.Write("R");
+                            break;
+                        case CellContent.Yellow:
+                            Console.Write("Y");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                Console.WriteLine("");
+            }
+            Console.WriteLine("");
+
+            Console.WriteLine("Enter the column number");
+
+            var c = -1;
+            while (c == -1)
+            {
+                var columnNumber = Console.ReadKey();
+                if (int.TryParse(columnNumber.KeyChar.ToString(), out c))
+                {
+                    API.MakeMove(playerID, serverURL, c);
+                }
+            }
         }
 
 
@@ -52,14 +84,29 @@ namespace Connect4.ExampleBot
                     case GameState.RedToPlay:
                         if (game.RedPlayerID == playerID)
                         {
-                            MakeMove(game, playerID, serverURL);
+                            try
+                            {
+                                MakeMove(game, playerID, serverURL);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                            
                         }
                         break;
 
                     case GameState.YellowToPlay:
                         if (game.YellowPlayerID == playerID)
                         {
-                            MakeMove(game, playerID, serverURL);
+                            try
+                            {
+                                MakeMove(game, playerID, serverURL);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
                         }
                         break;
 

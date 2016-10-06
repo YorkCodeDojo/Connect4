@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Web.Http;
@@ -124,7 +125,13 @@ namespace Connect4.Controllers
             game = await database.LoadGame(player.CurrentGameID.Value);
             if (game == null) return BadRequest("The player with this ID does not exist");
 
+            // If it's not this player's turn then we force them to wait.
+            if (!((game.YellowToPlay() && game.YellowPlayerID == playerID) || (game.RedToPlay() && game.RedPlayerID == playerID)))
+            {
+                await Task.Run(() => Thread.Sleep(500));
+            }
             return Ok(game);
+
         }
 
         [HttpPost]

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Connect4.Models.Player>
+﻿@model IEnumerable<Connect4.ViewModels.TeamViewModel>
 
 <h1>Teams</h1>
 <table class="table table-hover table-striped">
@@ -7,13 +7,39 @@
             @Html.DisplayNameFor(model => model.Name)
         </th>
 
+        <th>
+            @Html.DisplayNameFor(model => model.Playing)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.State)
+        </th>
+
+        <th>
+            &nbsp;
+        </th>
+        <th>
+            &nbsp;
+        </th>
     </tr>
 
     @foreach (var item in Model)
     {
         <tr>
             <td>
-                @Html.ActionLink(item.Name, "Index", "DisplayGame", new { gameID = item.CurrentGameID }, null)
+                @Html.DisplayFor(i => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.Playing)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.State)
+            </td>
+            <td>
+                @Html.ActionLink("View Game", "Index", "DisplayGame", new { gameID = item.CurrentGameID }, null)
+            </td>
+            <td>
+                @Html.ActionLink("Change Game", "Index", "ChangeGame", new { playerName = item.Name }, null)
             </td>
         </tr>
     }

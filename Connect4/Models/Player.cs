@@ -19,5 +19,7 @@ namespace Connect4.Models
         public Guid? CurrentGameID { get; set; }
         public Guid ID { get; set; }
         public string Name { get; set; }
+
+        public bool SystemBot { get; set; }
     }
 }

@@ -27,9 +27,9 @@ namespace Connect4.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.;Initial Catalog=Connect4;Integrated Security=True")]
-        public string Database {
+        public string DefaultConnection {
             get {
-                return ((string)(this["Database"]));
+                return ((string)(this["DefaultConnection"]));
             }
         }
     }

@@ -11,6 +11,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Connect4Database", "Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4.ExampleBot", "Connect4.ExampleBot\Connect4.ExampleBot.csproj", "{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4.Manual", "Connect4.Manual\Connect4.Manual.csproj", "{F5792DBC-A6BC-4295-A604-730A830C8CDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5792DBC-A6BC-4295-A604-730A830C8CDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5792DBC-A6BC-4295-A604-730A830C8CDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5792DBC-A6BC-4295-A604-730A830C8CDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5792DBC-A6BC-4295-A604-730A830C8CDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

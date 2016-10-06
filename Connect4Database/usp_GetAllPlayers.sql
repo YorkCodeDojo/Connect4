@@ -4,7 +4,8 @@ BEGIN
 
 	SELECT P.GUID AS ID,
 		   P.TeamName,		   
-		   G.GUID AS CurrentGameID
+		   G.GUID AS CurrentGameID,
+		   P.SystemBot
 	  FROM dbo.Players P
  LEFT JOIN dbo.Game G ON G.RedPlayerID = P.GUID OR G.YellowPlayerID = P.GUID
   ORDER BY P.TeamName

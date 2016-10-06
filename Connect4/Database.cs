@@ -11,7 +11,7 @@ namespace Connect4
     {
         public async Task<Player> LoadPlayer(Guid playerID)
         {
-            using (var cn = new SqlConnection(Settings.Default.Database))
+            using (var cn = new SqlConnection(Settings.Default.DefaultConnection))
             {
                 await cn.OpenAsync();
 
@@ -27,7 +27,8 @@ namespace Connect4
 
                         return new Player((string)dr["TeamName"], playerID)
                         {
-                            CurrentGameID = dr["CurrentGameID"] as Guid?
+                            CurrentGameID = dr["CurrentGameID"] as Guid?,
+                            SystemBot = (bool)dr["SystemBot"]
                         };
 
                     }
@@ -37,7 +38,7 @@ namespace Connect4
 
         internal async Task<IEnumerable<Player>> GetAllPlayers()
         {
-            using (var cn = new SqlConnection(Settings.Default.Database))
+            using (var cn = new SqlConnection(Settings.Default.DefaultConnection))
             {
                 await cn.OpenAsync();
 
@@ -53,7 +54,8 @@ namespace Connect4
                         {
                             result.Add(new Player((string)dr["TeamName"], (Guid)dr["ID"])
                             {
-                                CurrentGameID = dr["CurrentGameID"] as Guid?
+                                CurrentGameID = dr["CurrentGameID"] as Guid?,
+                                SystemBot = (bool)dr["SystemBot"]
                             });
                         }
                         return result;
@@ -61,10 +63,34 @@ namespace Connect4
                 }
             }
         }
+        public async Task<List<Game>> GetAllGames()
+        {
+            var result = new List<Game>();
+            using (var cn = new SqlConnection(Settings.Default.DefaultConnection))
+            {
+                await cn.OpenAsync();
 
+                using (var cmd = new SqlCommand())
+                {
+                    cmd.Connection = cn;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.CommandText = "usp_GetAllGames";
+                    using (var dr = await cmd.ExecuteReaderAsync())
+
+                    {
+                        while (await dr.ReadAsync())
+                        {
+                            var game = Game.LoadFromState((string)dr["State"]);
+                            result.Add(game);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
         public async Task<Game> LoadGame(Guid gameID)
         {
-            using (var cn = new SqlConnection(Settings.Default.Database))
+            using (var cn = new SqlConnection(Settings.Default.DefaultConnection))
             {
                 await cn.OpenAsync();
 
@@ -85,7 +111,7 @@ namespace Connect4
 
         public async Task SavePlayer(Player player, string password)
         {
-            using (var cn = new SqlConnection(Settings.Default.Database))
+            using (var cn = new SqlConnection(Settings.Default.DefaultConnection))
             {
                 await cn.OpenAsync();
 
@@ -103,7 +129,7 @@ namespace Connect4
 
         public async Task SaveGame(Game game)
         {
-            using (var cn = new SqlConnection(Settings.Default.Database))
+            using (var cn = new SqlConnection(Settings.Default.DefaultConnection))
             {
                 await cn.OpenAsync();
 
@@ -124,7 +150,7 @@ namespace Connect4
 
         public async Task DeleteGame(Guid gameID)
         {
-            using (var cn = new SqlConnection(Settings.Default.Database))
+            using (var cn = new SqlConnection(Settings.Default.DefaultConnection))
             {
                 await cn.OpenAsync();
 
