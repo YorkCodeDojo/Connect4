@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using Connect4.Bots;
@@ -27,21 +28,33 @@ namespace Connect4.Controllers
             var thisPlayer = allPlayers.SingleOrDefault(a => a.Name == model.PlayerName);
             if (thisPlayer == null) return RedirectToAction("Index", "Home");
 
-            var game = new Game();
-            game.ID = Guid.NewGuid();
-            game.YellowPlayerID = model.OtherPlayerID.Value;
-            game.RedPlayerID = thisPlayer.ID;
+            var currentGameID = thisPlayer.CurrentGameID;
+
+            var newGame = new Game();
+            newGame.ID = Guid.NewGuid();
+            newGame.YellowPlayerID = model.OtherPlayerID.Value;
+            newGame.RedPlayerID = thisPlayer.ID;
 
             var otherPlayer = await database.LoadPlayer(model.OtherPlayerID.Value);
             if (otherPlayer.SystemBot)
             {
                 var bot = BaseBot.GetBot(model.OtherPlayerID.Value);
-                bot.MakeMove(game);
+                bot.MakeMove(newGame);
             }
 
-            await this.database.SaveGame(game);
+            using (var tx = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                // Create the new game
+                await database.SaveGame(newGame);
 
-            return RedirectToAction("Index", "DisplayGame", new { gameID = game.ID });
+                // and delete the old game
+                if (currentGameID.HasValue)
+                    await database.DeleteGame(currentGameID.Value);
+
+                tx.Complete();
+            }
+
+            return RedirectToAction("Index", "DisplayGame", new { gameID = newGame.ID });
         }
 
         // GET: ChangeGame
