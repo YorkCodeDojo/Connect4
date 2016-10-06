@@ -29,9 +29,9 @@ namespace Connect4.Controllers
                 var state = "";
                 if (player.CurrentGameID.HasValue)
                 {
-                    var game = allGames.Single(a => a.ID == player.CurrentGameID.Value);
+                    var game = allGames.First(a => a.ID == player.CurrentGameID.Value);
                     var otherPlayerID = (game.RedPlayerID == player.ID) ? game.YellowPlayerID : game.RedPlayerID;
-                    var otherPlayer = allPlayers.Single(a => a.ID == otherPlayerID);
+                    var otherPlayer = allPlayers.First(a => a.ID == otherPlayerID);
                     otherPlayerName = otherPlayer.Name;
                     state = game.CurrentState.ToString();
                 }
