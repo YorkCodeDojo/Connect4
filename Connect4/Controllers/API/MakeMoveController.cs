@@ -15,13 +15,16 @@ namespace Connect4.Controllers
         /// </summary>
         /// <param name="playerID">The unique ID of your player,  obtained via the initial call to Register</param>
         /// <param name="columnNumber">The column number 0...</param>
+        /// <param name="password">Your team's password</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IHttpActionResult> POST(Guid playerID, int columnNumber)
+        public async Task<IHttpActionResult> POST(Guid playerID, int columnNumber, string password)
         {
             // Get the details of this player
             var player = await database.LoadPlayer(playerID);
             if (player == null) return BadRequest("The player with this ID does not exist");
+
+            if (player.Password != password) return BadRequest("Incorrect Password");
 
             // Retrieve the current state of the game
             var game = await database.LoadGame(player.CurrentGameID.Value);

@@ -16,7 +16,7 @@ namespace Connect4.ExampleBot
         private static void MakeMove(Game game, Guid playerID, string serverURL)
         {
             // PUT YOUR CODE IN HERE
-            API.MakeMove(playerID, serverURL, 0);  //Place a counter in the first column
+            API.MakeMove(playerID, serverURL, 0, teamPassword);  //Place a counter in the first column
 
             Console.WriteLine("Press to play");
             Console.ReadKey(true);

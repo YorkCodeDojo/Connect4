@@ -28,7 +28,8 @@ namespace Connect4
                         return new Player((string)dr["TeamName"], playerID)
                         {
                             CurrentGameID = dr["CurrentGameID"] as Guid?,
-                            SystemBot = (bool)dr["SystemBot"]
+                            SystemBot = (bool)dr["SystemBot"],
+                            Password = (string)dr["Password"],
                         };
 
                     }
@@ -55,7 +56,8 @@ namespace Connect4
                             result.Add(new Player((string)dr["TeamName"], (Guid)dr["ID"])
                             {
                                 CurrentGameID = dr["CurrentGameID"] as Guid?,
-                                SystemBot = (bool)dr["SystemBot"]
+                                SystemBot = (bool)dr["SystemBot"],
+                                Password = (string)dr["Password"],
                             });
                         }
                         return result;

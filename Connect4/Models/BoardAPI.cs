@@ -95,7 +95,7 @@ namespace Connect4.Models
                     connectLength = 0;
                 }
 
-                if (connectLength == CONNECT_LENGTH) return true;
+                if (connectLength >= CONNECT_LENGTH) return true;
             }
 
             //Vertical S-N
@@ -111,7 +111,7 @@ namespace Connect4.Models
                     connectLength = 0;
                 }
 
-                if (connectLength == CONNECT_LENGTH) return true;
+                if (connectLength >= CONNECT_LENGTH) return true;
             }
 
             //Diagonal SW-NE
@@ -136,7 +136,7 @@ namespace Connect4.Models
                     connectLength = 0;
                 }
 
-                if (connectLength == CONNECT_LENGTH) return true;
+                if (connectLength >= CONNECT_LENGTH) return true;
 
                 startColumn++;
                 startRow++;
@@ -163,7 +163,7 @@ namespace Connect4.Models
                     connectLength = 0;
                 }
 
-                if (connectLength == CONNECT_LENGTH) return true;
+                if (connectLength >= CONNECT_LENGTH) return true;
 
                 startColumn--;
                 startRow++;

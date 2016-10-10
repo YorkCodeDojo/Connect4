@@ -44,12 +44,12 @@ namespace Connect4.Controllers
 
             using (var tx = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                // Create the new game
-                await database.SaveGame(newGame);
-
                 // and delete the old game
                 if (currentGameID.HasValue)
                     await database.DeleteGame(currentGameID.Value);
+ 
+                // Create the new game
+                await database.SaveGame(newGame);
 
                 tx.Complete();
             }

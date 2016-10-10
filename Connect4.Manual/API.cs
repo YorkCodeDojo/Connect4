@@ -65,19 +65,18 @@ namespace Connect4.ExampleBot
         /// <param name="playerID"></param>
         /// <param name="serverURL"></param>
         /// <param name="columnNumber"></param>
-        internal static void MakeMove(Guid playerID, string serverURL, int columnNumber)
+        internal static void MakeMove(Guid playerID, string serverURL, int columnNumber, string teamPassword)
         {
             var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri(serverURL);
 
-            var httpResponseMessage = httpClient.PostAsync($"api/MakeMove?playerID={playerID}&columnNumber={columnNumber}", null).Result;
+            var httpResponseMessage = httpClient.PostAsync($"api/MakeMove?playerID={playerID}&columnNumber={columnNumber}&password={teamPassword}", null).Result;
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 // Something has gone wrong
                 var errors = httpResponseMessage.Content.ReadAsStringAsync().Result;
                 throw new Exception(string.Format("Failed to call {0}.   Status {1}.  Reason {2}. {3}", "MakeMove", (int)httpResponseMessage.StatusCode, httpResponseMessage.ReasonPhrase, errors));
             }
-
         }
 
         /// <summary>
