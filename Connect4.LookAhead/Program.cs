@@ -93,7 +93,7 @@ namespace Connect4.ExampleBot
             var toMatch = (weAreYellow ? CellContent.Yellow : CellContent.Red);
 
             // Downwards.  (Already at the top)
-            var r = rowToPlay;
+            var r = rowToPlay - 1;
             var c = columnToPlay;
             var chainLength = 0;
             while (r >= 0 && (game.Cells[c, r] == toMatch))
@@ -101,28 +101,28 @@ namespace Connect4.ExampleBot
                 r--;
                 chainLength++;
             }
-            if (chainLength >= 4) return true;
+            if (chainLength >= 3) return true;
 
             // Left to right
             r = rowToPlay;
-            c = columnToPlay;
+            c = columnToPlay - 1;
             chainLength = 0;
             while (c >= 0 && (game.Cells[c, r] == toMatch))  //Left
             {
                 c--;
                 chainLength++;
             }
-            c = columnToPlay;
+            c = columnToPlay + 1;
             while (c < COLUMNS && (game.Cells[c, r] == toMatch))  //Left
             {
                 c++;
                 chainLength++;
             }
-            if (chainLength >= 4) return true;
+            if (chainLength >= 3) return true;
 
             // +vc diagonal
-            r = rowToPlay;
-            c = columnToPlay;
+            r = rowToPlay - 1;
+            c = columnToPlay - 1;
             chainLength = 0;
             while (c >= 0 && r >= 0 && (game.Cells[c, r] == toMatch))  //Left-down
             {
@@ -130,19 +130,19 @@ namespace Connect4.ExampleBot
                 r--;
                 chainLength++;
             }
-            c = columnToPlay;
-            r = rowToPlay;
+            c = columnToPlay + 1;
+            r = rowToPlay + 1;
             while (r < ROWS && c < COLUMNS && (game.Cells[c, r] == toMatch))  //Right-Up
             {
                 c++;
                 r++;
                 chainLength++;
             }
-            if (chainLength >= 4) return true;
+            if (chainLength >= 3) return true;
 
             // -vc diagonal
-            r = rowToPlay;
-            c = columnToPlay;
+            r = rowToPlay + 1;
+            c = columnToPlay - 1;
             chainLength = 0;
             while (c >= 0 && r < ROWS && (game.Cells[c, r] == toMatch))  //Left-up
             {
@@ -150,15 +150,15 @@ namespace Connect4.ExampleBot
                 r++; //up
                 chainLength++;
             }
-            c = columnToPlay;
-            r = rowToPlay;
+            c = columnToPlay + 1;
+            r = rowToPlay - 1;
             while (r >= 0 && c < COLUMNS && (game.Cells[c, r] == toMatch))  //Right-down
             {
                 c++;  //right
                 r--;  //down
                 chainLength++;
             }
-            if (chainLength >= 4) return true;
+            if (chainLength >= 3) return true;
 
             return false;
 
