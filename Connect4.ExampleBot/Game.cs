@@ -23,6 +23,7 @@ namespace Connect4.ExampleBot
         public const int NUMBER_OF_COLUMNS = 7;
         public const int NUMBER_OF_ROWS = 6;
 
+        //Column, Row
         public CellContent[,] Cells;
 
         public GameState CurrentState;

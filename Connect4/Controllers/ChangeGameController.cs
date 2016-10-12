@@ -48,6 +48,10 @@ namespace Connect4.Controllers
                 if (currentGameID.HasValue)
                     await database.DeleteGame(currentGameID.Value);
  
+                // Delete the other player's previous game.  (System bots can play multiple games)
+                if (!otherPlayer.SystemBot && otherPlayer.CurrentGameID.HasValue)
+                    await database.DeleteGame(otherPlayer.CurrentGameID.Value);
+
                 // Create the new game
                 await database.SaveGame(newGame);
 
