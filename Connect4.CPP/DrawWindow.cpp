@@ -111,8 +111,8 @@ void CreateGameWindow(HINSTANCE hInstance)
     WinRect.bottom = WinSize + TextAreaSize;
     AdjustWindowRect(&WinRect, WS_OVERLAPPEDWINDOW, false);
     hWnd = CreateWindow(
-        TEXT("GettingStarted"),   // window class name
-        TEXT("Getting Started"),  // window caption
+        TEXT("Connect4"),   // window class name
+        TEXT("Connect4"),  // window caption
         WS_OVERLAPPEDWINDOW,      // window style
         CW_USEDEFAULT,            // initial x position
         CW_USEDEFAULT,            // initial y position
