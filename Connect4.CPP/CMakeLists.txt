@@ -3,7 +3,12 @@ PROJECT (Connect4)
 
 # Sources
 SET(SOURCES
-    main.cpp)
+    main.cpp
+    api.cpp
+    api.h
+    DrawWindow.cpp
+    DrawWindow.h
+    json.hpp)
 
 # Create the library
 ADD_EXECUTABLE (${PROJECT_NAME} ${SOURCES})
