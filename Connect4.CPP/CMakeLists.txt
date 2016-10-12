@@ -10,6 +10,7 @@ SET(SOURCES
     DrawWindow.h
     json.hpp)
 
+
 # Create the library
 ADD_EXECUTABLE (${PROJECT_NAME} ${SOURCES})
 INCLUDE_DIRECTORIES(Socket) 
@@ -17,4 +18,4 @@ TARGET_LINK_LIBRARIES(
     ${PROJECT_NAME}
 )
 
-SOURCE_GROUP ("App" FILES ${SOURCES})
+SOURCE_GROUP ("Connect4" FILES ${SOURCES})

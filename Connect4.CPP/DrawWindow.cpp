@@ -22,12 +22,15 @@ void SetGame(const Api::Game& game)
 VOID OnPaint(HDC hdc)
 {
     std::lock_guard<std::mutex> lock(viewMutex);
-    Bitmap *pMemBitmap = new Bitmap(WinSize, WinSize + TextAreaSize);
+   
+    Bitmap *pMemBitmap = new Bitmap(WinSize, WinSize + TextAreaSize, PixelFormat24bppRGB);
+    
     Graphics* pMemGraphics = Graphics::FromImage(pMemBitmap);
-
-    pMemGraphics->SetInterpolationMode(InterpolationMode::InterpolationModeHighQuality);
+    pMemGraphics->SetInterpolationMode(InterpolationMode::InterpolationModeHighQualityBicubic);
+    pMemGraphics->SetSmoothingMode(SmoothingMode::SmoothingModeAntiAlias);
 
     Graphics graphics(hdc);
+    graphics.SetInterpolationMode(InterpolationMode::InterpolationModeHighQuality);
 
     Font font(&FontFamily(L"Arial"), 12);
     pMemGraphics->Clear(Color::Black);
@@ -46,6 +49,8 @@ VOID OnPaint(HDC hdc)
     SolidBrush redBrush(Color::Red);
     SolidBrush yellowBrush(Color::Yellow);
     SolidBrush whiteBrush(Color::White);
+    Pen blueLightBrush(Color::CornflowerBlue);
+    blueLightBrush.SetWidth(4);
 
     pMemGraphics->FillRectangle(&blueBrush, BoardOrigin, BoardOrigin, BoardWidth, BoardHeight);
     for (int row = Api::Game::NUMBER_OF_ROWS - 1; row >= 0; row--)
@@ -60,12 +65,15 @@ VOID OnPaint(HDC hdc)
             {
             case Api::CellContent::Empty:
                 pMemGraphics->FillEllipse(&whiteBrush, circleX, circleY, circleSize, circleSize);
+                pMemGraphics->DrawEllipse(&blueLightBrush, circleX, circleY, circleSize, circleSize);
                 break;
             case Api::CellContent::Red:
                 pMemGraphics->FillEllipse(&redBrush, circleX, circleY, circleSize, circleSize);
+                pMemGraphics->DrawEllipse(&blueLightBrush, circleX, circleY, circleSize, circleSize);
                 break;
             case Api::CellContent::Yellow:
                 pMemGraphics->FillEllipse(&yellowBrush, circleX, circleY, circleSize, circleSize);
+                pMemGraphics->DrawEllipse(&blueLightBrush, circleX, circleY, circleSize, circleSize);
                 break;
             }
         }
@@ -74,7 +82,7 @@ VOID OnPaint(HDC hdc)
     bool finished;
     auto statusText = Api::GetStatusString(gameView, finished);
     pMemGraphics->DrawString(std::wstring(statusText.begin(), statusText.end()).c_str(), statusText.length(), &font, PointF(REAL(BoardOrigin), REAL(BoardOrigin + BoardHeight)), &whiteBrush);
-    graphics.DrawImage(pMemBitmap, Rect(0, 0, WinSize, WinSize + TextAreaSize));
+    graphics.DrawImage(pMemBitmap, 0, 0);
     delete pMemBitmap;
     delete pMemGraphics;
 
