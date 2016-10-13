@@ -10,8 +10,8 @@
 --------------------------------------------------------------------------------------
 */
 
---DELETE FROM dbo.Game
---GO
+DELETE FROM dbo.Game
+GO
 
---DELETE FROM dbo.Players WHERE SystemBot = 0
---GO
+DELETE FROM dbo.Players WHERE SystemBot = 0
+GO

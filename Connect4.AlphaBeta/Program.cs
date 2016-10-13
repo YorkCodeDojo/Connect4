@@ -7,7 +7,7 @@ namespace Connect4.ExampleBot
     class Program
     {
         // Put the name of your team here
-        private const string teamName = "AlphaBeta";
+        private const string teamName = "David's AlphaBeta";
 
         // and a password for your team here.  This is to prevent cheating!
         private const string teamPassword = "MyPassword";

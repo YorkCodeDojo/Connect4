@@ -30,6 +30,12 @@ namespace Connect4.Controllers
             var game = await database.LoadGame(player.CurrentGameID.Value);
             if (game == null) return BadRequest("Your player is not currently playing a game.  Call NewGame");
 
+
+            if (game.CurrentState != Models.GameState.RedToPlay && game.CurrentState != Models.GameState.YellowToPlay)
+            {
+                throw new Exception("This game is not playable");
+            }
+
             // Is it the players turn
             var playerIsYellow = (game.YellowPlayerID == player.ID);
             if (playerIsYellow && !game.YellowToPlay())
