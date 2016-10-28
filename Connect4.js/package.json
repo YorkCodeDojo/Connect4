@@ -1,0 +1,46 @@
+{
+  "name": "vscode-typescript-boilerplate",
+  "version": "1.2.1",
+  "description": "A project skeleton for TypeScript development in Visual Studio Code.",
+  "main": "build/app/app.js",
+  "scripts": {
+    "postinstall": "cd src && typings install",
+    "prebuild": "rimraf build",
+    "build": "tsc -p src/ || true",
+    "test": "mocha build/test --require source-map-support/register || true",
+    "clean": "rimraf build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codesleuth/vscode-typescript-boilerplate.git"
+  },
+  "keywords": [
+    "vscode",
+    "typescript",
+    "example",
+    "boilerplate",
+    "project",
+    "skeleton",
+    "debug",
+    "intellisense",
+    "compile",
+    "transpile"
+  ],
+  "author": "David Wood <david.p.wood@gmail.com> (http://www.codesleuth.co.uk/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codesleuth/vscode-typescript-boilerplate/issues"
+  },
+  "homepage": "https://github.com/codesleuth/vscode-typescript-boilerplate#readme",
+  "private": true,
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "rimraf": "^2.5.2",
+    "sinon": "^1.17.4",
+    "typescript": "^1.8.10",
+    "typings": "^1.0.4"
+  },
+  "dependencies": {
+    "source-map-support": "^0.4.0"
+  }
+}
