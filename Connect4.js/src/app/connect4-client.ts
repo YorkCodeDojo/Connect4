@@ -92,7 +92,7 @@ export default class {
         res.on('end', () => resolve({
           ok: true,
           statusCode: res.statusCode,
-          body: JSON.parse(Buffer.concat(chunks).toString('utf8'))
+          body: chunks.length == 0 ? null : JSON.parse(Buffer.concat(chunks).toString('utf8'))
         }));
       });
 
