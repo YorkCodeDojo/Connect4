@@ -1,6 +1,6 @@
-# vscode-typescript-boilerplate
+# connect4-js
 
-This project provides a skeleton structure and IDE settings files to help with TypeScript development in [Visual Studio Code][vscode] (as of build 0.9.1). The project builds all TypeScript (`.ts`) files into a `build` directory in the root.
+This project provides a skeleton structure for creating a connect 4 bot.
 
 ## Project Features
 
@@ -11,7 +11,6 @@ The project currently provides the following features:
 * Error detection and navigation within Code for both build and test problems (see [Code Tasks](https://code.visualstudio.com/Docs/editor/tasks))
 * Debug settings (_currently a bug is preventing this from being reliable_)
 * Type definitions provided by [`typings`][typings]
-* Custom type definitions ready for your own declarations
 
 ### Project Structure
 
@@ -45,11 +44,9 @@ README.md
 
 ## Getting Started
 
-This repository is ready for you to clone and start building your code around it. Simply follow the guide below.
-
 ### Prerequisites
 
-1. Clone, fork, or [download](//github.com/Codesleuth/vscode-typescript-boilerplate/releases) the project.
+1. Clone, fork, or download the project.
 1. You need Node.js. [Go install it][nodejsdownload].
 1. Ensure the required dependencies have been installed:
     ```bash
@@ -78,7 +75,7 @@ This repository is ready for you to clone and start building your code around it
 1. Build with one of the following shortcuts:
    * Press <kbd>CTRL</kbd>/<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> to build, which is declared in the `.vscode/tasks.json` file with the `isBuildCommand` marker
    * Press <kbd>CTRL</kbd>/<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> and select the `Tasks: Run Build Task` option
-   * Press <kbd>CTRL</kbd>/<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>, delete the `>` and type `task build`
+   * Press <kbd>CTRL</kbd>/<kbd>Cmd</kbd>+<kbd>P</kbd> and type `task build`
 1. If there were no errors, you should see a new directory, `build`, in the root with the following content:
   ```text
   build/
@@ -107,10 +104,6 @@ There are sample tests located in the `test` folder. You can run them by hitting
 ### Running and Debugging
 
 To run the project in debug mode, simply hit <kbd>F5</kbd>! Place breakpoints in your TypeScript code and view them in the debugger (<kbd>CTRL</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> or <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd>).
-
-## Contribute
-
-Yes, that would be great! Open a pull request and we'll go from there!
 
 ## License
 
