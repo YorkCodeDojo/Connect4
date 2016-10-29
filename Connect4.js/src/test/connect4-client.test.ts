@@ -66,7 +66,14 @@ describe('given a connect 4 client', () => {
     describe('when making a move', () => {
         const response = client.makeMove(playerId, teamPassword, 0);
 
-        it('should not error', () => response);
+        it('should returns ok', () => {
+
+            response.then(x => {
+                assert.ok(x.ok)
+            })
+
+            return response
+        });
 
         return response;
     });
@@ -74,7 +81,14 @@ describe('given a connect 4 client', () => {
     describe('when creating a new game', () => {
         const response = client.newGame(playerId);
 
-        it('should not error', () => response);
+        it('should returns ok', () => {
+
+            response.then(x => {
+                assert.ok(x.ok)
+            })
+
+            return response
+        });
 
         return response;
     });
