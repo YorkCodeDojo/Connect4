@@ -7,10 +7,10 @@ const teamPassword = 'Pa$$w0rd1!';
 
 describe('given a connect 4 client', () => {
 
-    let client = new Connect4Client();
+    const client = new Connect4Client();
 
     describe('when getting a game', () => {
-        let response = client.getGame(playerId);
+        const response = client.getGame(playerId);
 
         it('Should return a game id', () => {
             response.then(x => {
@@ -38,7 +38,7 @@ describe('given a connect 4 client', () => {
             response.then(x => {
                 assert.equal(x.body.Cells.length, 7);
 
-                for (let column of x.body.Cells) {
+                for (const column of x.body.Cells) {
                     assert.equal(column.length, 6);
                 }
             });
@@ -49,7 +49,7 @@ describe('given a connect 4 client', () => {
     });
 
     describe('when registering a team', () => {
-        let response = client.registerTeam(teamName, teamPassword);
+        const response = client.registerTeam(teamName, teamPassword);
 
         it('should return the team id', () => {
 
@@ -64,7 +64,7 @@ describe('given a connect 4 client', () => {
     });
 
     describe('when making a move', () => {
-        let response = client.makeMove(playerId, teamPassword, 0);
+        const response = client.makeMove(playerId, teamPassword, 0);
 
         it('should not error', () => response);
 
@@ -72,7 +72,7 @@ describe('given a connect 4 client', () => {
     });
 
     describe('when creating a new game', () => {
-        let response = client.newGame(playerId);
+        const response = client.newGame(playerId);
 
         it('should not error', () => response);
 
