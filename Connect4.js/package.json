@@ -1,7 +1,7 @@
 {
-  "name": "vscode-typescript-boilerplate",
-  "version": "1.2.1",
-  "description": "A project skeleton for TypeScript development in Visual Studio Code.",
+  "name": "connect4-js",
+  "version": "0.0.1",
+  "description": "A project skeleton for a connect 4 bot.",
   "main": "build/app/app.js",
   "scripts": {
     "postinstall": "cd src && typings install",
@@ -12,26 +12,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codesleuth/vscode-typescript-boilerplate.git"
+    "url": "git+https://github.com/YorkCodeDojo/Connect4.git"
   },
   "keywords": [
-    "vscode",
+    "Connect4",
     "typescript",
     "example",
-    "boilerplate",
-    "project",
-    "skeleton",
-    "debug",
-    "intellisense",
-    "compile",
-    "transpile"
+    "Dojo",
+    "York"
   ],
-  "author": "David Wood <david.p.wood@gmail.com> (http://www.codesleuth.co.uk/)",
+  "author": "Kevin Smith <kev_bite@msn.com> (http://kevsoft.net/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/codesleuth/vscode-typescript-boilerplate/issues"
+    "url": "https://github.com/YorkCodeDojo/Connect4/issues"
   },
-  "homepage": "https://github.com/codesleuth/vscode-typescript-boilerplate#readme",
+  "homepage": "https://github.com/YorkCodeDojo/Connect4/tree/master/Connect4.js",
   "private": true,
   "devDependencies": {
     "mocha": "^2.5.3",
