@@ -42,7 +42,6 @@ npm install && npm build && node .
    * Press <kbd>CTRL</kbd>/<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> to build, which is declared in the `.vscode/tasks.json` file with the `isBuildCommand` marker
    * Press <kbd>CTRL</kbd>/<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> and select the `Tasks: Run Build Task` option
    * Press <kbd>CTRL</kbd>/<kbd>Cmd</kbd>+<kbd>P</kbd> and type `task build`
-  ```
 
 ### Error Navigation
 
