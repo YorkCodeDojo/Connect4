@@ -48,12 +48,12 @@ export default class {
   }
 
   registerTeam(teamName: string, password: string): Promise<IResponse<string>> {
-    const qs = querystring.stringify({ teamName: teamName, password: password });
+    const qs = querystring.stringify({ teamName, password });
     return this.do<string>('POST', `/api/Register?${qs}`);
   }
 
   makeMove(playerId: string, password: string, columnNumber: number): Promise<IResponse<void>> {
-    const qs = querystring.stringify({ playerID: playerId, columnNumber: columnNumber, password: password });
+    const qs = querystring.stringify({ playerID: playerId, columnNumber, password });
     return this.do<void>('POST', `/api/MakeMove?${qs}`);
   }
 
