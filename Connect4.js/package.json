@@ -1,0 +1,41 @@
+{
+  "name": "connect4-js",
+  "version": "0.0.1",
+  "description": "A project skeleton for a connect 4 bot.",
+  "main": "build/app/app.js",
+  "scripts": {
+    "postinstall": "cd src && typings install",
+    "prebuild": "rimraf build",
+    "build": "tsc -p src/ || true",
+    "test": "mocha build/test --require source-map-support/register || true",
+    "clean": "rimraf build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YorkCodeDojo/Connect4.git"
+  },
+  "keywords": [
+    "Connect4",
+    "typescript",
+    "example",
+    "Dojo",
+    "York"
+  ],
+  "author": "Kevin Smith <kev_bite@msn.com> (http://kevsoft.net/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/YorkCodeDojo/Connect4/issues"
+  },
+  "homepage": "https://github.com/YorkCodeDojo/Connect4/tree/master/Connect4.js",
+  "private": true,
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "rimraf": "^2.5.2",
+    "sinon": "^1.17.4",
+    "typescript": "^2.0.3",
+    "typings": "^1.0.4"
+  },
+  "dependencies": {
+    "source-map-support": "^0.4.0"
+  }
+}
