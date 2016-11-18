@@ -174,5 +174,39 @@ def test_pos_pos_diag_mid_nowin():
                           [0, 1, 1, 1, 1, 1, 0]])
     assert not is_winning_move(board, 4, True)
 
-test_pos_pos_diag_win()    
+def test_neg_neg_diag_win():
+    board = define_board([[0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0],
+                          [0, 1, 2, 0, 0, 0, 0],
+                          [0, 1, 1, 2, 0, 0, 0],
+                          [2, 1, 1, 1, 2, 0, 0]])
+    assert is_winning_move(board, 1, True)    
 
+def test_pos_neg_diag_win():
+    board = define_board([[0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0],
+                          [0, 2, 0, 0, 0, 0, 0],
+                          [0, 1, 2, 0, 0, 0, 0],
+                          [0, 1, 1, 2, 0, 0, 0],
+                          [2, 1, 1, 1, 0, 0, 0]])
+    assert is_winning_move(board, 4, True)     
+
+    
+def test_pos_neg_diag_midwin():
+    board = define_board([[0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0],
+                          [0, 2, 0, 0, 0, 0, 0],
+                          [0, 1, 0, 0, 0, 0, 0],
+                          [0, 1, 1, 2, 0, 0, 0],
+                          [2, 1, 1, 1, 2, 0, 0]])
+    assert is_winning_move(board, 2, True)     
+
+def test_pos_neg_diag_nomidwin():
+    board = define_board([[0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0],
+                          [0, 2, 0, 0, 0, 0, 0],
+                          [0, 1, 0, 0, 0, 0, 0],
+                          [0, 1, 1, 2, 0, 0, 0],
+                          [2, 1, 1, 1, 0, 0, 0]])
+    assert not is_winning_move(board, 2, True)        
