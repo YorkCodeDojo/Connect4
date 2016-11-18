@@ -95,13 +95,49 @@ def is_winning_move(game, column_to_play, play_yellow):
     # Right to Left
     column_to_check = column_to_play + 1
     chain_length = 0
-    while column_to_check < NUMBER_OF_COLUMNS and (cell(game, column_to_check, row_to_check) == counter_to_match):
+    while (column_to_check < NUMBER_OF_COLUMNS and
+           (cell(game, column_to_check, row_to_check) == counter_to_match)):
         column_to_check = column_to_check + 1
-        chain_length = chain_length+1
+        chain_length = chain_length + 1
     if chain_length >= 3:
         return True
 
-    # +ve diagonal        
+    # +ve diagonal
+    row_to_check = row_to_play - 1
+    column_to_check = column_to_play - 1
+    chain_length = 0
+    while (column_to_check >= 0 and row_to_check >= 0
+           and (cell(game, column_to_check, row_to_check) == counter_to_match)):
+        column_to_check = column_to_check - 1
+        row_to_check = row_to_check-1
+        chain_length = chain_length + 1
+    column_to_check = column_to_play + 1
+    row_to_check = row_to_play + 1
+    while (row_to_check < NUMBER_OF_ROWS and column_to_check < NUMBER_OF_COLUMNS
+           and (cell(game, column_to_check, row_to_check) == counter_to_match)):
+        column_to_check = column_to_check + 1
+        row_to_check = row_to_check+1
+    if chain_length >= 3:
+        return True
+
+    # -vc diagonal
+    row_to_check = row_to_play + 1
+    column_to_check = column_to_play - 1
+    chain_length = 0
+    while (column_to_check >= 0 and row_to_check < NUMBER_OF_ROWS
+           and (cell(game, column_to_check, row_to_check) == counter_to_match)):
+        column_to_check = column_to_check - 1
+        row_to_check = row_to_check+1
+        chain_length = chain_length + 1
+
+    column_to_check = column_to_play + 1
+    row_to_check = row_to_play - 1
+    while (row_to_check >= 0 and column_to_check < NUMBER_OF_COLUMNS
+           and (cell(game, column_to_check, row_to_check) == counter_to_match)):
+        column_to_check = column_to_check + 1
+        row_to_check = row_to_check -1
+    if chain_length >= 3:
+        return True
 
     # Not a winning move
     return False
