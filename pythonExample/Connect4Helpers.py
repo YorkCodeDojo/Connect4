@@ -30,21 +30,26 @@ NUMBER_OF_ROWS = 6
 # API Calls
 def register_team():
     """ Call to register your team on the connect4 server"""
-    url = SERVER_URL + 'api/Register?teamName=' + TEAM_NAME + '&password=' + PASSWORD
-    response = requests.post(url)
+    payload = {'teamName': TEAM_NAME, 'password':PASSWORD}
+    response = requests.post(SERVER_URL + 'api/Register', params=payload)
+    if response.status_code != 200:
+        response.raise_for_status()
     return response.text.strip('"')
 
 def get_current_game(player_id):
     """ Call to get the current state of the game """
-    url = SERVER_URL + 'api/GameState?playerID=' + player_id
-    response = requests.get(url)
+    payload = {'playerID': player_id}
+    response = requests.get(SERVER_URL + 'api/GameState', params=payload)
+    if response.status_code != 200:
+        response.raise_for_status()
     return response.json()
 
 def make_move(player_id, column_number):
     """ Call when you wish to place a counter in a column """
-    url = SERVER_URL + 'api/MakeMove?playerID=' + player_id
-    url = url + '&columnNumber='+str(column_number)+'&password=' + PASSWORD
-    requests.post(url)
+    payload = {'playerID': player_id, 'columnNumber':column_number, 'password':PASSWORD}
+    response = requests.post(SERVER_URL + 'api/MakeMove', params=payload)
+    if response.status_code != 200:
+        response.raise_for_status()
     return
 
 # Helper methods

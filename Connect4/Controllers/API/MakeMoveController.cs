@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Connect4.Bots;
@@ -24,7 +26,12 @@ namespace Connect4.Controllers
             var player = await database.LoadPlayer(playerID);
             if (player == null) return BadRequest("The player with this ID does not exist");
 
-            if (player.Password != password) return BadRequest("Incorrect Password");
+            if (player.Password != password)
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+                response.ReasonPhrase = "Incorrect Password";
+                return ResponseMessage(response);
+            }
 
             // Retrieve the current state of the game
             var game = await database.LoadGame(player.CurrentGameID.Value);
@@ -62,7 +69,15 @@ namespace Connect4.Controllers
                 if (otherPlayer.SystemBot)
                 {
                     var bot = BaseBot.GetBot(otherPlayerID);
-                    bot.MakeMove(game);
+                    await bot.MakeMove(game);
+                    await database.SaveGame(game);
+                }
+
+                // The other player supports http webhooks
+                if (!string.IsNullOrWhiteSpace(otherPlayer.WebHook))
+                {
+                    var bot = BaseBot.GetWebHookBot(otherPlayer.WebHook, otherPlayerID);
+                    await bot.MakeMove(game);
                     await database.SaveGame(game);
                 }
             }

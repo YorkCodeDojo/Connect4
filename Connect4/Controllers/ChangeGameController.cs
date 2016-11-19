@@ -39,7 +39,14 @@ namespace Connect4.Controllers
             if (otherPlayer.SystemBot)
             {
                 var bot = BaseBot.GetBot(model.OtherPlayerID.Value);
-                bot.MakeMove(newGame);
+                await bot.MakeMove(newGame);
+            }
+
+            // The other player supports http webhooks
+            if (!string.IsNullOrWhiteSpace(otherPlayer.WebHook))
+            {
+                var bot = BaseBot.GetWebHookBot(otherPlayer.WebHook, model.OtherPlayerID.Value);
+                await bot.MakeMove(newGame);
             }
 
             using (var tx = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))

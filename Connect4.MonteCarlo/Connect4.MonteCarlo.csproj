@@ -7,8 +7,8 @@
     <ProjectGuid>{53F0D56F-E55C-4CEE-9F96-52E52F3B7386}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Connect4.ExampleBot</RootNamespace>
-    <AssemblyName>Connect4.ExampleBot</AssemblyName>
+    <RootNamespace>Connect4.MonteCarlo</RootNamespace>
+    <AssemblyName>Connect4.MonteCarlo</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="API.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="MonteCarlo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Connect4.Models;
 
 namespace Connect4.Bots
@@ -15,7 +16,7 @@ namespace Connect4.Bots
         /// Make our move and return the amended game
         /// </summary>
         /// <param name="game"></param>
-        internal override void MakeMove(Game game)
+        internal override Task MakeMove(Game game)
         {
             // Are we playing as yellow?
             var isYellow = (game.YellowPlayerID == FillupBot.GUID);
@@ -23,6 +24,8 @@ namespace Connect4.Bots
             // Play in the first column where there is space
             var columnNumber = Enumerable.Range(0, Game.NUMBER_OF_COLUMNS).First(c => game.IsMoveAllowed(c));
             game.MakeMove(isYellow, columnNumber);
+
+            return Task.FromResult(0);
         }
 
     }

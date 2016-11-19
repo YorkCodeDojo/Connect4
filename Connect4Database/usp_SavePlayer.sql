@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[usp_SavePlayer](@TeamName AS NVARCHAR(100), @Password AS NVARCHAR(100)) AS
+﻿
+CREATE PROCEDURE [dbo].[usp_SavePlayer](@TeamName AS NVARCHAR(100), @Password AS NVARCHAR(100)) AS
 BEGIN
 	SET NOCOUNT ON
 

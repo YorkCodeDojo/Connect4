@@ -28,7 +28,6 @@ def play_game():
 
         # Get the current state of the game
         game = get_current_game(player_id)
-        print(game)
 
         # What colour are we playing
         we_are_yellow = (game['YellowPlayerID'] == player_id)

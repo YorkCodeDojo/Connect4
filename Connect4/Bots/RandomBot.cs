@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Connect4.Models;
 
 namespace Connect4.Bots
@@ -14,7 +15,7 @@ namespace Connect4.Bots
         /// Make our move and return the amended game
         /// </summary>
         /// <param name="game"></param>
-        internal override void MakeMove(Game game)
+        internal override Task MakeMove(Game game)
         {
             // Are we playing as yellow?
             var isYellow = (game.YellowPlayerID == RandomBot.GUID);
@@ -29,7 +30,7 @@ namespace Connect4.Bots
                 if (game.IsMoveAllowed(columnNumber))
                 {
                     game.MakeMove(isYellow, columnNumber);
-                    return;
+                    return Task.FromResult(0);
                 }
             }
         }

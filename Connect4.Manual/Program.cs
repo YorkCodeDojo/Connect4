@@ -11,8 +11,8 @@ namespace Connect4.ExampleBot
         private const string teamPassword = "MyPassword";
 
         // The location of the game server
-        private const string serverURL = "http://yorkdojoconnect4.azurewebsites.net/";
-        //private const string serverURL = "http://localhost:55011/";
+        //private const string serverURL = "http://yorkdojoconnect4.azurewebsites.net/";
+        private const string serverURL = "http://localhost:55011/";
 
         private static void MakeMove(Game game, Guid playerID, string serverURL)
         {

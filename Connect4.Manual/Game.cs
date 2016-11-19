@@ -12,6 +12,9 @@ namespace Connect4.ExampleBot
         Draw = 5
     }
 
+
+
+
     public enum CellContent
     {
         Empty = 0,

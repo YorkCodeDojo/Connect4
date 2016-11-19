@@ -4,5 +4,6 @@
     [TeamName] NVARCHAR(100) NOT NULL,
     [Password] NVARCHAR(100) NOT NULL, 
     [SystemBot] BIT NOT NULL DEFAULT 0,
-CONSTRAINT ak_Players UNIQUE (TeamName)
+[WebHook] NVARCHAR(MAX) NULL, 
+    CONSTRAINT ak_Players UNIQUE (TeamName)
 )

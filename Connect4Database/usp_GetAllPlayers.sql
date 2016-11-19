@@ -6,9 +6,10 @@ BEGIN
 		   P.TeamName,		   
 		   MAX(G.GUID) AS CurrentGameID,
 		   P.SystemBot,
-		   P.Password
+		   P.Password,
+		   P.WebHook
 	  FROM dbo.Players P
  LEFT JOIN dbo.Game G ON G.RedPlayerID = P.GUID OR G.YellowPlayerID = P.GUID
-  GROUP BY P.GUID, P.TeamName, P.SystemBot, P.Password
+  GROUP BY P.GUID, P.TeamName, P.SystemBot, P.Password, P.WebHook
   ORDER BY P.TeamName
 END

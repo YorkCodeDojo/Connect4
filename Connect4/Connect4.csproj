@@ -224,6 +224,7 @@
     <Compile Include="Bots\BaseBot.cs" />
     <Compile Include="Bots\FillUpBot.cs" />
     <Compile Include="Bots\RandomBot.cs" />
+    <Compile Include="Bots\WebHookBot.cs" />
     <Compile Include="Controllers\API\APIControllerBase.cs" />
     <Compile Include="Controllers\API\GameStateController.cs" />
     <Compile Include="Controllers\API\NewGameController.cs" />

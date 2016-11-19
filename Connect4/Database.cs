@@ -30,6 +30,7 @@ namespace Connect4
                             CurrentGameID = dr["CurrentGameID"] as Guid?,
                             SystemBot = (bool)dr["SystemBot"],
                             Password = (string)dr["Password"],
+                            WebHook = dr["WebHook"] as string,
                         };
 
                     }
@@ -58,6 +59,7 @@ namespace Connect4
                                 CurrentGameID = dr["CurrentGameID"] as Guid?,
                                 SystemBot = (bool)dr["SystemBot"],
                                 Password = (string)dr["Password"],
+                                WebHook = dr["WebHook"] as string,
                             });
                         }
                         return result;
