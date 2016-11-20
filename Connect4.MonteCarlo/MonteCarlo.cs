@@ -1,99 +1,188 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-
 
 public class MonteCarlo
 {
-    public int SuggestMove(Game game, Guid playerID)
+    // Nodes with statistics
+    private Dictionary<string, Node> allKnownNodes = new Dictionary<string, Node>();
+
+    /// <summary>
+    /// Calculates Upper Confidence Bounds (UCB)
+    /// </summary>
+    /// <param name="v">the estimated value of the node</param>
+    /// <param name="N">total number of times that its parent has been visited</param>
+    /// <param name="n">of the times the node has been visited </param>
+    /// <returns></returns>
+    public double CalculateUCB(double v, int N, int n)
     {
-        var weAreYellow = (game.YellowPlayerID == playerID);
-
-        // Which move will give us the highest score?
-        var winningColumns = new System.Collections.Concurrent.ConcurrentBag<Tuple<int, int>>();   //Column, Score
-
-        // Where can be played
-        var availableMoves = game.GetAvailableMoves();
-
-        Parallel.For(0, 100000, g =>
-        {
-                //Pick a first column at random
-                var column = availableMoves[new Random().Next(availableMoves.Count)];
-
-                //Play the game
-                var didYellowWin = PlayGame(game, weAreYellow, column);
-
-                //If we won,  remember which column we play first
-                if (didYellowWin.HasValue)
-                if ((didYellowWin.Value == weAreYellow))
-                    winningColumns.Add(new Tuple<int, int>(column, 1));
-                else
-                    winningColumns.Add(new Tuple<int, int>(column, -1));
-
-        });
-
-        // Which column won the most
-        var columnScores = winningColumns.GroupBy(a => a);
-
-        // Add up the totals in each group
-        var bestScore = int.MinValue;
-        var bestColumn = -1;
-        foreach (var columnScore in columnScores)
-        {
-            var columnNumber = columnScore.Key.Item1;
-            var total = columnScore.Select(a => a.Item2).Sum();
-            if (total > bestScore)
-            {
-                bestScore = total;
-                bestColumn = columnNumber;
-            }
-        }
-
-        if (bestColumn == -1)
-        {
-            // Just play the first column
-            for (int column = 0; column < Game.NUMBER_OF_COLUMNS; column++)
-            {
-                if (game.IsValidMove(column))
-                {
-                    bestColumn = column;
-                    break;
-                }
-            }
-        }
-
-        return bestColumn;
-
+        double C = 1.44; //C is a tunable bias parameter
+        return v + C * Math.Sqrt((2 * Math.Log(N)) / n);
     }
 
     /// <summary>
-    /// Returns TRUE if yellow won
-    /// NULL for a draw
+    /// Performs the selection stage by returning the move which gives the highest UCB
+    /// NULL can be returned if there are no more 
     /// </summary>
-    /// <param name="game"></param>
-    /// <param name="itIsYellowsTurn"></param>
-    /// <param name="columnToPlay"></param>
-    /// <param name="doWeWantYellowToWin"></param>
+    /// <param name="parentNode"></param>
     /// <returns></returns>
-    private static bool? PlayGame(Game game, bool itIsYellowsTurn, int columnToPlay)
+    public Node Selection(Node parentNode, bool playerIsYellow, List<Node> playList)
     {
-        //Would we have won?
-        if (game.IsWinningMove(columnToPlay, itIsYellowsTurn))
+        // Find all the legal moves from this point
+        var availableMoves = parentNode.AsGame().GetAvailableMoves();
+
+        // Calculate the UCB for each move,  and then take the highest.  
+        var bestUCB = 0D;
+        var bestNode = default(Node);
+        foreach (var columnToPlay in availableMoves)
         {
-            return itIsYellowsTurn;
+            // Get the game after applying the move
+            var childGame = parentNode.AsGame().EffectOfMakingMove(playerIsYellow, columnToPlay);
+
+            // Do we have the statistics for this node?
+            var childHash = childGame.GenerateHash();
+            var childNode = default(Node);
+            if (this.allKnownNodes.TryGetValue(childHash, out childNode))
+            {
+                var ucb = CalculateUCB(childNode.NumberOfWins, parentNode.PlayCount, childNode.PlayCount);
+                if (ucb > bestUCB)
+                {
+                    bestUCB = ucb;
+                    bestNode = childNode;
+                }
+
+            }
+            else
+            {
+                // We have a node without any statistics,  this ends the selection stage.
+                return parentNode;
+            }
         }
 
-        //Make the move
-        var newGame = game.EffectOfMakingMove(itIsYellowsTurn, columnToPlay);
+        // The statistics don't give us a node.
+        if (bestNode == null) return parentNode;
 
-        //Play the next move at random
-        var availableMoves = newGame.GetAvailableMoves();
-        if (!availableMoves.Any()) return null;  //draw
-        while (true)
+        // bestNode is the best childnode,  recursive down from this point
+        playList.Add(bestNode);
+        return Selection(bestNode, !playerIsYellow, playList);
+    }
+
+
+    public Node Expansion(Node parentNode, bool playerIsYellow, List<Node> playList)
+    {
+        // Find all the legal moves from this point
+        var availableMoves = parentNode.AsGame().GetAvailableMoves();
+
+        // Select a child node at random
+        var columnToPlay = availableMoves[new Random().Next(availableMoves.Count)];
+
+        // What does the board now look like?
+        var childGame = parentNode.AsGame().EffectOfMakingMove(playerIsYellow, columnToPlay);
+
+        // Add the new node to our statistics tree
+        var childNode = default(Node);
+        var childHash = childGame.GenerateHash();
+        if (!this.allKnownNodes.TryGetValue(childHash, out childNode))
         {
-            var nextColumnToPlay = availableMoves[new Random().Next(availableMoves.Count)];
-            if (newGame.IsValidMove(nextColumnToPlay))
-                return PlayGame(newGame, !itIsYellowsTurn, nextColumnToPlay);
+            childNode = new Node() { Hash = childHash, NumberOfWins = 0, PlayCount = 0, ColumnPlayed = columnToPlay };
+            this.allKnownNodes.Add(childNode.Hash, childNode);
+        }
+
+        playList.Add(childNode);
+        return childNode;
+    }
+
+    /// <summary>
+    /// Keep playing moves at random until the game is complete.
+    /// </summary>
+    /// <param name="parentNode"></param>
+    /// <param name="playerIsYellow"></param>
+    /// <returns>True if yellow won,  False if red won and NULL for a draw</returns>
+    public bool? Simulation(Node parentNode, bool playerIsYellow, List<Node> playList)
+    {
+        //Play the next move at random
+        var availableMoves = parentNode.AsGame().GetAvailableMoves();
+        if (!availableMoves.Any()) return null;  //draw
+
+        // Select a child node at random
+        var columnToPlay = availableMoves[new Random().Next(availableMoves.Count)];
+
+        // What does the board now look like?
+        var childGame = parentNode.AsGame().EffectOfMakingMove(playerIsYellow, columnToPlay);
+
+        // Add the new node to our statistics tree
+        var childNode = default(Node);
+        var childHash = childGame.GenerateHash();
+        if (!this.allKnownNodes.TryGetValue(childHash, out childNode))
+        {
+            childNode = new Node() { Hash = childHash, NumberOfWins = 0, PlayCount = 0, ColumnPlayed = columnToPlay };
+            this.allKnownNodes.Add(childNode.Hash, childNode);
+        }
+
+        // Track the move
+        playList.Add(childNode);
+
+        // Would making this move result in a win?
+        if (parentNode.AsGame().IsWinningMove(columnToPlay, playerIsYellow))
+        {
+            // Game over.
+            return playerIsYellow;
+        }
+        else
+        {
+            // Keep going
+            return Simulation(childNode, !playerIsYellow, playList);
+        }
+
+    }
+
+    public void Update(List<Node> playList, bool playerIsYellow, bool yellowWon)
+    {
+        var yellowPlayedNode = (playList.Count % 2 == 0 ? playerIsYellow : !playerIsYellow);
+        foreach (var node in playList)
+        {
+            node.NumberOfWins++;
+            if (yellowWon == yellowPlayedNode) node.NumberOfWins++;
+            yellowPlayedNode = !yellowPlayedNode;
         }
     }
+
+
+    public int SuggestMove(Game game, Guid playerID)
+    {
+        const int NUMBER_OF_GAMES = 10000;
+
+        // What colour are we playing?
+        var weAreYellow = (game.YellowPlayerID == playerID);
+
+        // The current state of the game
+        var rootNode = new Node() { Hash = game.GenerateHash(), NumberOfWins = 0, PlayCount = 0 };
+
+        for (int gameNumber = 1; gameNumber <= NUMBER_OF_GAMES; gameNumber++)
+        {
+            // The moves we get played out in this game
+            var moves = new List<Node>();
+
+            // 1. Peform selection based on statistics
+            var bestNodeUsingStatistics = Selection(rootNode, weAreYellow, moves);
+
+            // 2. Expansion
+            var nextNode = Expansion(bestNodeUsingStatistics, (moves.Count % 2 == 0 ? weAreYellow : !weAreYellow), moves);
+
+            // 3. Simulation
+            var yellowWon = Simulation(nextNode, (moves.Count % 2 == 0 ? weAreYellow : !weAreYellow), moves);
+
+            // 4. Back-propagation  (yellowWon will be NULL in the case of a draw)
+            if (yellowWon.HasValue)
+            {
+                Update(moves, weAreYellow, yellowWon.Value);
+            }
+
+            if (gameNumber == NUMBER_OF_GAMES)
+                return moves.First().ColumnPlayed;
+        }
+
+        return -1;
+    }
+
 }

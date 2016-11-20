@@ -10,7 +10,7 @@ class Program
 
     // and a password for your team here.  This is to prevent cheating!
     private const string teamPassword = "MyPassword";
-
+ 
     // The location of the game server
     private const string serverURL = "http://yorkdojoconnect4.azurewebsites.net/";
 
@@ -18,9 +18,6 @@ class Program
     {
         var mc = new MonteCarlo();
         var column = mc.SuggestMove(game, playerID);
-
-        
-
         API.MakeMove(playerID, serverURL, column, teamPassword);
     }
 

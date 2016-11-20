@@ -29,6 +29,39 @@ public class Game
     public Guid RedPlayerID { get; set; }
     public Guid ID { get; set; }
 
+    public Game()
+    {
+
+    }
+
+    public Game(string hash)
+    {
+        this.Cells = new CellContent[NUMBER_OF_COLUMNS, NUMBER_OF_ROWS];
+        var offset = 0;
+        for (var c = 0; c < NUMBER_OF_COLUMNS; c++)
+        {
+            for (var r = 0; r < NUMBER_OF_ROWS; r++)
+            {
+                this.Cells[c, r] = (CellContent)int.Parse(hash.Substring(offset, 1));
+                offset++;
+            }
+        }
+    }
+
+
+    public string GenerateHash()
+    {
+        var hash = "";
+        for (var c = 0; c < NUMBER_OF_COLUMNS; c++)
+        {
+            for (var r = 0; r < NUMBER_OF_ROWS; r++)
+            {
+                hash += (int)this.Cells[c, r];
+            }
+        }
+        return hash;
+    }
+
     public List<int> GetAvailableMoves()
     {
         var result = new List<int>();

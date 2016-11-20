@@ -13,6 +13,19 @@ namespace Connect4.Controllers
     public class MakeMoveController : APIControllerBase
     {
         /// <summary>
+        /// The fuel library doesn't allow POSTS with querystring parms
+        /// </summary>
+        /// <param name="playerID"></param>
+        /// <param name="columnNumber"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IHttpActionResult> GET(Guid playerID, int columnNumber, string password)
+        {
+            return await POST(playerID, columnNumber, password);
+        }
+
+        /// <summary>
         /// Play a move in the specified column
         /// </summary>
         /// <param name="playerID">The unique ID of your player,  obtained via the initial call to Register</param>

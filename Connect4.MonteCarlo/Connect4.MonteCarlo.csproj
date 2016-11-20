@@ -54,6 +54,7 @@
     <Compile Include="API.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="MonteCarlo.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
