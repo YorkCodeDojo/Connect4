@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-
+using System.Diagnostics;
 
 class Program
 {
@@ -16,8 +14,14 @@ class Program
 
     private static void MakeMove(Game game, Guid playerID, string serverURL)
     {
+        var sw = new Stopwatch();
+        sw.Start();
+
         var mc = new MonteCarloSearch();
         var column = mc.SuggestMove(game, playerID);
+
+        sw.Stop();
+        Console.WriteLine($"playing: {column} - took {Math.Round(sw.Elapsed.TotalSeconds,0)}s");
         API.MakeMove(playerID, serverURL, column, teamPassword);
     }
 

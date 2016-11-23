@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 /// <summary>
 /// First we explore all nodes in the tree to depth MAX_DEPTH
@@ -10,7 +11,7 @@ using System.Linq;
 public class MonteCarloSearch
 {
     private const int MAX_DEPTH = 3;
-    private const int NO_OF_RANDOM_GAMES_PER_NODE = 100;
+    private const int NO_OF_RANDOM_GAMES_PER_NODE = 200;
 
     /// <summary>
     /// Uses Monte Carlo search to suggest the number column to play in.
@@ -26,32 +27,44 @@ public class MonteCarloSearch
         var currentState = new Node() { NumberOfWins = 0, PlayCount = 0, Game = game, Parent = null };
 
         // Work out which is the best out of the available moves.
-        var bestScore = 0M;
-        var bestColumn = -1;
         var availableMoves = game.GetAvailableMoves();
-        foreach (var columnToPlay in availableMoves)
+
+        //Score, ColumnNumber
+        var scores = new System.Collections.Concurrent.ConcurrentBag<Tuple<decimal, int>>();
+
+        Parallel.For(0, availableMoves.Count, columnToPlay =>
         {
             // Have we just won,  in which case we are done!
             if (game.IsWinningMove(columnToPlay, playerIsYellow))
             {
-                return columnToPlay;
+                scores.Add(new Tuple<decimal, int>(decimal.MaxValue, columnToPlay));
             }
-
-            // Get the game after applying the move
-            var childGame = game.EffectOfMakingMove(playerIsYellow, columnToPlay);
-            var childNode = new Node() { NumberOfWins = 0, PlayCount = 0, Game = childGame, Parent = currentState };
-
-            // How successfully were we playing down from here?
-            PlayToDepth(1, childNode, !playerIsYellow, playerIsYellow);
-
-            if (childNode.PlayCount > 0)
+            else
             {
-                decimal score = (decimal)childNode.NumberOfWins / childNode.PlayCount;
-                if (score > bestScore || bestColumn == -1)
+                // Get the game after applying the move
+                var childGame = game.EffectOfMakingMove(playerIsYellow, columnToPlay);
+                var childNode = new Node() { NumberOfWins = 0, PlayCount = 0, Game = childGame, Parent = null };
+
+                // How successfully were we playing down from here?
+                PlayToDepth(1, childNode, !playerIsYellow, playerIsYellow);
+
+                if (childNode.PlayCount > 0)
                 {
-                    bestScore = score;
-                    bestColumn = columnToPlay;
+                    decimal score = (decimal)childNode.NumberOfWins / childNode.PlayCount;
+                    scores.Add(new Tuple<decimal, int>(score, columnToPlay));
                 }
+            }
+        });
+
+        // Find the highest scoring column
+        var bestScore = decimal.MinValue;
+        var bestColumn = -1;
+        foreach (var result in scores)
+        {
+            if (result.Item1 > bestScore)
+            {
+                bestScore = result.Item1;
+                bestColumn = result.Item2;
             }
         }
 
@@ -146,9 +159,6 @@ public class MonteCarloSearch
         // Select a child node at random
         var columnToPlay = availableMoves[new Random().Next(availableMoves.Count)];
 
-        // What does the board now look like?
-        var childGame = parentNode.EffectOfMakingMove(yellowNextToPlay, columnToPlay);
-
         // Would making this move result in a win?
         if (parentNode.IsWinningMove(columnToPlay, yellowNextToPlay))
         {
@@ -156,6 +166,9 @@ public class MonteCarloSearch
         }
         else
         {
+            // What does the board now look like?
+            var childGame = parentNode.EffectOfMakingMove(yellowNextToPlay, columnToPlay);
+
             // Keep going
             return PlayRandomGame(childGame, !yellowNextToPlay);
         }
