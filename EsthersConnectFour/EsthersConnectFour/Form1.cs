@@ -13,6 +13,9 @@ namespace EsthersConnectFour
         private int _boardWidth;
         private int _boardHeight;
         private int _columnWidth;
+        private int _rowHeight;
+        private bool _redPlayerNext = true;
+        private int[] _heights = new int[7] { 0, 0, 0, 0, 0, 0, 0 };
 
         static class Constants
         {
@@ -32,6 +35,7 @@ namespace EsthersConnectFour
             _boardWidth = ClientSize.Width - 200;
             _boardHeight = ClientSize.Height - 200;
             _columnWidth = _boardWidth / Constants.NumberOfColumns;
+            _rowHeight = _boardHeight / Constants.NumberOfRows;
             _template = CreateTemplate();
             CreateBackGroundTemplate();
         }
@@ -48,9 +52,9 @@ namespace EsthersConnectFour
                     for (int row = 0; row < Constants.NumberOfRows; row++)
                     {
                         var x = column * _columnWidth;
-                        var y = row * (_boardHeight / Constants.NumberOfRows);
+                        var y = row * _rowHeight;
 
-                        g.DrawImage(_template, x, y, _columnWidth, _boardHeight / Constants.NumberOfRows);
+                        g.DrawImage(_template, x, y, _columnWidth, _rowHeight);
                     }
                 }
             }
@@ -58,10 +62,10 @@ namespace EsthersConnectFour
 
         private Bitmap CreateTemplate()
         {
-            var template = new Bitmap(_columnWidth, _boardHeight / Constants.NumberOfRows);
+            var template = new Bitmap(_columnWidth, _rowHeight);
             var g1 = Graphics.FromImage(template);
             var b = new SolidBrush(Color.LightGray);
-            g1.FillRectangle(Brushes.DarkBlue, 0, 0, _columnWidth, _boardHeight / Constants.NumberOfRows);
+            g1.FillRectangle(Brushes.DarkBlue, 0, 0, _columnWidth, _rowHeight);
             g1.FillEllipse(b, 40, 20 + y, 50, 50);
             template.MakeTransparent(Color.LightGray);
             return template;
@@ -75,22 +79,32 @@ namespace EsthersConnectFour
 
                 var column = _droppingCounter;
                 var x = column * _columnWidth;
+                var whichRow = y / _rowHeight;
 
-                var copyFrom = new RectangleF(100 + x, 0, _columnWidth, y + 150);
+                var top = (whichRow - 1) * _rowHeight;
+                var copyFrom = new RectangleF(100 + x, top + 100, _columnWidth, _rowHeight * 2);
                 var backgroundBitMap = _layer1Template.Clone(copyFrom, _layer1Template.PixelFormat);
-                g.DrawImage(backgroundBitMap, x, -100);
+                g.DrawImage(backgroundBitMap, x, top);
 
-                g.FillEllipse(Brushes.Red, x + 40, y, 50, 50);
+                if (_redPlayerNext)
+                    g.FillEllipse(Brushes.Red, x + 40, y, 50, 50);
+                else
+                    g.FillEllipse(Brushes.Yellow, x + 40, y, 50, 50);
 
-                for (int row = 0; row < Constants.NumberOfRows; row++)
-                {
-                    var y1 = row * (_boardHeight / Constants.NumberOfRows);
-                    g.DrawImage(_template, x, y1, _columnWidth, _boardHeight / Constants.NumberOfRows);
-                }
+                if (whichRow > 0)
+                    g.DrawImage(_template, x, (whichRow - 1) * _rowHeight, _columnWidth, _rowHeight);
+                g.DrawImage(_template, x, whichRow * _rowHeight, _columnWidth, _rowHeight);
             }
 
             var increment = 30;
-            var stopAt = _boardHeight - 70;
+            var stopAt = _boardHeight - 70 - (_rowHeight * _heights[_droppingCounter]);
+
+            if (y >= stopAt)
+            {
+                _heights[_droppingCounter]++;
+                _redPlayerNext = !_redPlayerNext;
+            }
+
             timer1.Enabled = y < stopAt;
             if (stopAt - y < increment)
                 y = stopAt;
@@ -142,7 +156,10 @@ namespace EsthersConnectFour
                                                   Constants.CounterSize,
                                                   Constants.CounterSize);
 
-                        g.FillPie(Brushes.Red, where, 0, -180);
+                        if (_redPlayerNext)
+                            g.FillPie(Brushes.Red, where, 0, -180);
+                        else
+                            g.FillPie(Brushes.Yellow, where, 0, -180);
 
                         _highlightedColumn = columnNumber;
                     }
