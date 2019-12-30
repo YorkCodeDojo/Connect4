@@ -15,8 +15,7 @@ namespace EsthersConnectFour
         private int _columnWidth;
         private int _rowHeight;
         private bool _redPlayerNext = true;
-        private int[] _heights = new int[7] { 0, 0, 0, 0, 0, 0, 0 };
-
+        private Game _game = new Game();
         static class Constants
         {
             public const int NumberOfRows = 6;
@@ -42,21 +41,10 @@ namespace EsthersConnectFour
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            this.DoubleBuffered = true;
-
             using (var g = this.CreateGraphics())
             {
                 g.TranslateTransform(100, 100);
-                for (int column = 0; column < Constants.NumberOfColumns; column++)
-                {
-                    for (int row = 0; row < Constants.NumberOfRows; row++)
-                    {
-                        var x = column * _columnWidth;
-                        var y = row * _rowHeight;
-
-                        g.DrawImage(_template, x, y, _columnWidth, _rowHeight);
-                    }
-                }
+                DrawBoard(g);
             }
         }
 
@@ -73,44 +61,67 @@ namespace EsthersConnectFour
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            using (var g = this.CreateGraphics())
+            var currentContext = BufferedGraphicsManager.Current;
+            using (var myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle))
             {
+                var g = myBuffer.Graphics;
+
+                g.DrawImage(_layer1Template, 0, 0);
+
                 g.TranslateTransform(100, 100);
 
                 var column = _droppingCounter;
                 var x = column * _columnWidth;
-                var whichRow = y / _rowHeight;
 
-                var top = (whichRow - 1) * _rowHeight;
-                var copyFrom = new RectangleF(100 + x, top + 100, _columnWidth, _rowHeight * 2);
-                var backgroundBitMap = _layer1Template.Clone(copyFrom, _layer1Template.PixelFormat);
-                g.DrawImage(backgroundBitMap, x, top);
+                g.FillEllipse(_droppingColour, x + 40, y, 50, 50);
 
-                if (_redPlayerNext)
-                    g.FillEllipse(Brushes.Red, x + 40, y, 50, 50);
+                var counterNumber = _game.NumberOfCountersInColumn(_droppingCounter);
+                var row = Constants.NumberOfRows - counterNumber;
+
+                DrawBoard(g, column, row);
+
+                myBuffer.Render();
+
+                var increment = 30;
+                var stopAt = _boardHeight - 70 - (_rowHeight * (counterNumber - 1));
+
+                timer1.Enabled = y < stopAt;
+                if (stopAt - y < increment)
+                    y = stopAt;
                 else
-                    g.FillEllipse(Brushes.Yellow, x + 40, y, 50, 50);
-
-                if (whichRow > 0)
-                    g.DrawImage(_template, x, (whichRow - 1) * _rowHeight, _columnWidth, _rowHeight);
-                g.DrawImage(_template, x, whichRow * _rowHeight, _columnWidth, _rowHeight);
+                    y += increment;
             }
+        }
 
-            var increment = 30;
-            var stopAt = _boardHeight - 70 - (_rowHeight * _heights[_droppingCounter]);
-
-            if (y >= stopAt)
+        private void DrawBoard(Graphics g, int skipColumn = -1, int skipRow = -1)
+        {
+            for (int column = 0; column < Constants.NumberOfColumns; column++)
             {
-                _heights[_droppingCounter]++;
-                _redPlayerNext = !_redPlayerNext;
+                for (int row = 0; row < Constants.NumberOfRows; row++)
+                {
+                    var x = column * _columnWidth;
+                    var y = row * _rowHeight;
+
+                    g.DrawImage(_template, x, y, _columnWidth, _rowHeight);
+
+                    if (row != skipRow || column != skipColumn)
+                    {
+                        switch (_game.Cells[column, row])
+                        {
+                            case CellContent.Red:
+                                g.FillEllipse(Brushes.Red, x + 40, y + 20, 50, 50);
+                                break;
+
+                            case CellContent.Yellow:
+                                g.FillEllipse(Brushes.Yellow, x + 40, y + 20, 50, 50);
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                }
             }
-
-            timer1.Enabled = y < stopAt;
-            if (stopAt - y < increment)
-                y = stopAt;
-            else
-                y += increment;
-
         }
 
         private void CreateBackGroundTemplate()
@@ -124,7 +135,20 @@ namespace EsthersConnectFour
         {
             if (_highlightedColumn > -1)
             {
+                if (_redPlayerNext)
+                {
+                    _droppingColour = Brushes.Red;
+                    if (!_game.Play(_highlightedColumn, CellContent.Red)) return;
+                }
+                else
+                {
+                    _droppingColour = Brushes.Yellow;
+                    if (!_game.Play(_highlightedColumn, CellContent.Yellow)) return;
+                }
+
+                _redPlayerNext = !_redPlayerNext;
                 _droppingCounter = _highlightedColumn;
+                _highlightedColumn = -1;
                 y = -50;
                 timer1.Interval = 50;
                 timer1.Enabled = true;
@@ -132,9 +156,12 @@ namespace EsthersConnectFour
         }
 
         private int _highlightedColumn = -1;
+        private Brush _droppingColour;
 
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
+            if (timer1.Enabled) return;
+
             if (_columnWidth > 0 && e.Y <= 100 && e.X >= 100 && (e.X - 100) / _columnWidth < 7)
             {
                 var columnNumber = (e.X - 100) / _columnWidth;
