@@ -14,8 +14,10 @@ namespace EsthersConnectFour
         private int _boardHeight;
         private int _columnWidth;
         private int _rowHeight;
-        private bool _redPlayerNext = true;
-        private Game _game = new Game();
+        private Game _game;
+        private bool _weAreRed;
+        private bool _weArePlaying;
+
         static class Constants
         {
             public const int NumberOfRows = 6;
@@ -23,9 +25,12 @@ namespace EsthersConnectFour
             public const int CounterSize = 50;
         }
 
-        public Form1()
+        public Form1(APIDetails details)
         {
             InitializeComponent();
+            this._details = details;
+            _game = API.GetGame(_details.PlayerID, _details.URL);
+            _weAreRed = _game.RedPlayerID == _details.PlayerID;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -91,6 +96,19 @@ namespace EsthersConnectFour
                 else
                     y += increment;
             }
+
+            if (!timer1.Enabled)
+            {
+                if (_weArePlaying)
+                {
+                    _game = API.GetGame(_details.PlayerID, _details.URL);
+                    using (var g = this.CreateGraphics())
+                    {
+                        g.TranslateTransform(100, 100);
+                        DrawBoard(g);
+                    }
+                }
+            }
         }
 
         private void DrawBoard(Graphics g, int skipColumn = -1, int skipRow = -1)
@@ -106,7 +124,7 @@ namespace EsthersConnectFour
 
                     if (row != skipRow || column != skipColumn)
                     {
-                        switch (_game.Cells[column, row])
+                        switch (_game.Cells[column, Constants.NumberOfRows - row - 1])
                         {
                             case CellContent.Red:
                                 g.FillEllipse(Brushes.Red, x + 40, y + 20, 50, 50);
@@ -135,7 +153,7 @@ namespace EsthersConnectFour
         {
             if (_highlightedColumn > -1)
             {
-                if (_redPlayerNext)
+                if (_weAreRed)
                 {
                     _droppingColour = Brushes.Red;
                     if (!_game.Play(_highlightedColumn, CellContent.Red)) return;
@@ -146,10 +164,12 @@ namespace EsthersConnectFour
                     if (!_game.Play(_highlightedColumn, CellContent.Yellow)) return;
                 }
 
-                _redPlayerNext = !_redPlayerNext;
+                API.MakeMove(_details.PlayerID, _details.URL, _highlightedColumn, _details.Password);
+
                 _droppingCounter = _highlightedColumn;
                 _highlightedColumn = -1;
                 y = -50;
+                _weArePlaying = true;
                 timer1.Interval = 50;
                 timer1.Enabled = true;
             }
@@ -157,6 +177,7 @@ namespace EsthersConnectFour
 
         private int _highlightedColumn = -1;
         private Brush _droppingColour;
+        private readonly APIDetails _details;
 
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
@@ -183,7 +204,7 @@ namespace EsthersConnectFour
                                                   Constants.CounterSize,
                                                   Constants.CounterSize);
 
-                        if (_redPlayerNext)
+                        if (_weAreRed)
                             g.FillPie(Brushes.Red, where, 0, -180);
                         else
                             g.FillPie(Brushes.Yellow, where, 0, -180);

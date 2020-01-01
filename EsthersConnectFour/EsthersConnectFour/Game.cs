@@ -41,7 +41,7 @@ namespace EsthersConnectFour
 
         internal bool Play(int column, CellContent cellContent)
         {
-            for (int row = NUMBER_OF_ROWS - 1; row >= 0; row--)
+            for (int row = 0; row < NUMBER_OF_ROWS; row++)
             {
                 if (Cells[column,row] == CellContent.Empty)
                 {
@@ -56,7 +56,7 @@ namespace EsthersConnectFour
         internal int NumberOfCountersInColumn(int column)
         {
             var result = 0;
-            for (int row = NUMBER_OF_ROWS - 1; row >= 0; row--)
+            for (int row = 0; row < NUMBER_OF_ROWS; row++)
             {
                 if (Cells[column, row] == CellContent.Empty)
                 {
