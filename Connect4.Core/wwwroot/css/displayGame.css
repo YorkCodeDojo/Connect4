@@ -1,0 +1,19 @@
+﻿table {
+    box-sizing: content-box !important;
+    border-color: blue;
+}
+
+table.fixed {
+    table-layout: fixed;
+    width: 600px;
+}
+
+    table.fixed td {
+        overflow: hidden;
+        width: 80px;
+    }
+
+h2 {
+    padding-top: 0;
+    margin-top: 0;
+}

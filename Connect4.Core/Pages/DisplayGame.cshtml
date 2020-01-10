@@ -1,0 +1,65 @@
+﻿@page
+@model Connect4.Core.DisplayGameModel
+@using Connect4.Core.Models
+@{
+    ViewData["Title"] = "DisplayGame";
+}
+
+<link rel="stylesheet" href="~/css/displayGame.css" />
+
+
+@switch (Model.ViewModel.CurrentState)
+{
+    case GameState.GameNotStarted:
+        <h2>Current State: Not Started</h2>
+        break;
+    case GameState.RedWon:
+        <h2>Current State: Red Won</h2>
+        break;
+    case GameState.YellowWon:
+        <h2>Current State: Yellow Won</h2>
+        break;
+    case GameState.RedToPlay:
+        <h2>Current State: Red to Play</h2>
+        break;
+    case GameState.YellowToPlay:
+        <h2>Current State: Yellow to Play</h2>
+        break;
+    case GameState.Draw:
+        <h2>Current State: Draw</h2>
+        break;
+}
+
+<h2>Red Player: @ViewData["RedPlayer"]</h2>
+<h2>Yellow Player: @ViewData["YellowPlayer"]</h2>
+
+<table class="table fixed" style="border:dotted">
+
+    @for (int rowNumber = Game.NUMBER_OF_ROWS - 1; rowNumber >= 0; rowNumber--)
+    {
+        <tr>
+            @for (int columnNumber = 0; columnNumber < Game.NUMBER_OF_COLUMNS; columnNumber++)
+            {
+                <td>
+                    @switch (Model.ViewModel.Cells[columnNumber, rowNumber])
+                    {
+                        case CellContent.Empty:
+                            <img src="~/images/empty.bmp" />
+                            break;
+                        case CellContent.Red:
+                            <img src="~/images/red.bmp" />
+                            break;
+                        case CellContent.Yellow:
+                            <img src="~/images/yellow.bmp" />
+                            break;
+                        default:
+                            break;
+                    }
+
+                </td>
+            }
+        </tr>
+    }
+
+
+</table>

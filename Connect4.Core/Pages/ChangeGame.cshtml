@@ -1,0 +1,34 @@
+﻿@page
+@model Connect4.Core.ChangeGameModel
+@{
+    ViewData["Title"] = "ChangeGame";
+}
+
+<h2>@Model.ViewModel.PlayerName</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(a => a.ViewModel.PlayerName)
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="control-label col-md-2">Play Against</div>
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ViewModel.OtherPlayerID, Model.ViewModel.AllOtherPlayers, "-- Select The Other Player --", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ViewModel.OtherPlayerID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Start New Game" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/Index">Back to Team List</a>
+</div>

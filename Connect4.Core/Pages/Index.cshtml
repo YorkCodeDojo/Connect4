@@ -1,0 +1,49 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<meta http-equiv="refresh" content="5">
+<h1>Teams</h1>
+<table class="table table-hover table-striped">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Playing
+        </th>
+        <th>
+            State
+        </th>
+        <th>
+            &nbsp;
+        </th>
+        <th>
+            &nbsp;
+        </th>
+    </tr>
+
+    @foreach (var item in Model.ViewModel)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(i => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.Playing)
+            </td>
+            <td>
+                @Html.DisplayFor(i => item.State)
+            </td>
+            <td>
+                <a href="/DisplayGame?GameID=@item.CurrentGameID">View Game</a>
+            </td>
+            <td>
+                <a href="/ChangeGame?playerName=@item.Name">Change Game</a>
+            </td>
+        </tr>
+    }
+
+</table>
