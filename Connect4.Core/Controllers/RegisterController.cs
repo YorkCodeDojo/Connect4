@@ -44,15 +44,15 @@ namespace Connect4.Core.Controllers
             await _database.SavePlayer(player, registerTeamViewModel.Password);
 
             // Reload the player
-            player = await _database.LoadPlayer(player.ID);
-            if (player == null) return BadRequest("No player with this ID exists");
+            var reloadedPlayer = await _database.LoadPlayer(player.ID);
+            if (reloadedPlayer == null) return BadRequest("No player with this ID exists");
 
             // Create them a game for them to develop against
-            if (!player.CurrentGameID.HasValue)
+            if (!reloadedPlayer.CurrentGameID.HasValue)
             {
-                await _gameCreator.CreateInitialGame(player.ID);
+                await _gameCreator.CreateInitialGame(reloadedPlayer.ID);
             }
-            return player.ID;
+            return reloadedPlayer.ID;
         }
 
     }

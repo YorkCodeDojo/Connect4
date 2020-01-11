@@ -15,7 +15,7 @@ namespace EsthersConnectFour
             Application.Exit();
         }
 
-        private void cmdOK_Click(object sender, EventArgs e)
+        private async void cmdOK_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
@@ -24,15 +24,19 @@ namespace EsthersConnectFour
                 return;
             }
 
-            var playerID = API.RegisterTeam(txtName.Text, "23456236478236", "https://codedojoconnect4.azurewebsites.net/");
+            // var url = "https://codedojoconnect4.azurewebsites.net/";
+            var url = "https://localhost:5001/";
+            var api = new API(new Uri(url));
+            var playerID = await api.RegisterTeam(txtName.Text, "23456236478236");
             var details = new APIDetails
             {
                 PlayerID = playerID,
                 Password = "23456236478236",
-                URL = "https://codedojoconnect4.azurewebsites.net/",
             };
 
-            var frm = new Form1(details);
+            await api.NewGame(playerID);
+
+            var frm = new Form1(details, api);
             this.Hide();
             frm.Show();
         }

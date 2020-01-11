@@ -72,7 +72,7 @@ namespace Connect4.Core
             var otherPlayer = await _database.LoadPlayer(ViewModel.OtherPlayerID.Value);
             if (otherPlayer.SystemBot)
             {
-                var bot = _botCreator.GetBot(ViewModel.OtherPlayerID.Value);
+                var bot = _botCreator.GetSystemBot(ViewModel.OtherPlayerID.Value);
                 await bot.MakeMove(newGame);
             }
 

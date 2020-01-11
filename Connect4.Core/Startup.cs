@@ -34,7 +34,7 @@ namespace Connect4.Core
 
             services.AddRazorPages();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
 
             services.AddSwaggerGen(c =>
             {

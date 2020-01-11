@@ -25,15 +25,14 @@ namespace EsthersConnectFour
             public const int CounterSize = 50;
         }
 
-        public Form1(APIDetails details)
+        public Form1(APIDetails details, API api)
         {
             InitializeComponent();
-            this._details = details;
-            _game = API.GetGame(_details.PlayerID, _details.URL);
-            _weAreRed = _game.RedPlayerID == _details.PlayerID;
+            _details = details;
+            _api = api;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
             this.BackColor = Color.Black;
             _boardWidth = ClientSize.Width - 200;
@@ -42,14 +41,20 @@ namespace EsthersConnectFour
             _rowHeight = _boardHeight / Constants.NumberOfRows;
             _template = CreateTemplate();
             CreateBackGroundTemplate();
+
+            _game = await _api.GetGame(_details.PlayerID);
+            _weAreRed = _game.RedPlayerID == _details.PlayerID;
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            using (var g = this.CreateGraphics())
+            if (_game is object)
             {
-                g.TranslateTransform(100, 100);
-                DrawBoard(g);
+                using (var g = this.CreateGraphics())
+                {
+                    g.TranslateTransform(100, 100);
+                    DrawBoard(g);
+                }
             }
         }
 
@@ -64,7 +69,7 @@ namespace EsthersConnectFour
             return template;
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private async void timer1_Tick(object sender, EventArgs e)
         {
             var currentContext = BufferedGraphicsManager.Current;
             using (var myBuffer = currentContext.Allocate(this.CreateGraphics(), this.DisplayRectangle))
@@ -101,13 +106,41 @@ namespace EsthersConnectFour
             {
                 if (_weArePlaying)
                 {
-                    _game = API.GetGame(_details.PlayerID, _details.URL);
+                    _game = await _api.GetGame(_details.PlayerID);
                     using (var g = this.CreateGraphics())
                     {
                         g.TranslateTransform(100, 100);
                         DrawBoard(g);
                     }
                 }
+
+                switch (_game.CurrentState)
+                {
+                    case GameState.RedWon:
+                        DisplayMessage($"Red has won. {(_weAreRed ? "Well done" : "Bad Luck")}");
+                        break;
+                    case GameState.YellowWon:
+                        DisplayMessage($"Yellow has won. {(!_weAreRed ? "Well done" : "Bad Luck")}");
+                        break;
+                    case GameState.Draw:
+                        DisplayMessage("It was a draw");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void DisplayMessage(string message)
+        {
+            using (var g = this.CreateGraphics())
+            {
+                var font = new System.Drawing.Font("Segoe UI", 21.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+                g.TranslateTransform((this.ClientSize.Width - 500) / 2, 0);
+                g.FillRectangle(Brushes.DeepPink, 0, 0, 500, 100);
+                var width = g.MeasureString(message, font).Width;
+                var height = g.MeasureString(message, font).Height;
+                g.DrawString(message, font, Brushes.White, (500 - width) / 2, (100 - height) / 2);
             }
         }
 
@@ -149,7 +182,7 @@ namespace EsthersConnectFour
             layer1Graphics.DrawImage(this.BackgroundImage, new Rectangle(0, 0, ClientSize.Width, ClientSize.Height));
         }
 
-        private void Form1_Click(object sender, EventArgs e)
+        private async void Form1_Click(object sender, EventArgs e)
         {
             if (_highlightedColumn > -1)
             {
@@ -164,7 +197,7 @@ namespace EsthersConnectFour
                     if (!_game.Play(_highlightedColumn, CellContent.Yellow)) return;
                 }
 
-                API.MakeMove(_details.PlayerID, _details.URL, _highlightedColumn, _details.Password);
+                await _api.MakeMove(_details.PlayerID, _highlightedColumn, _details.Password);
 
                 _droppingCounter = _highlightedColumn;
                 _highlightedColumn = -1;
@@ -178,6 +211,7 @@ namespace EsthersConnectFour
         private int _highlightedColumn = -1;
         private Brush _droppingColour;
         private readonly APIDetails _details;
+        private readonly API _api;
 
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
