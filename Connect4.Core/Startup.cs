@@ -25,7 +25,7 @@ namespace Connect4.Core
         public void ConfigureServices(IServiceCollection services)
         {
             var settings = new Settings();
-            Configuration.GetSection("Settings").Bind(settings);
+            settings.ConnectionString = Configuration["ConnectionStrings:DefaultConnection"];
             services.AddSingleton(Options.Create(settings));
 
             services.AddSingleton<Services.Database>();

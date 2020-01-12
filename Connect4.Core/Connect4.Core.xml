@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Connect4.Core</name>
+    </assembly>
+    <members>
+        <member name="T:Connect4.Core.Bots.FillupBot">
+            <summary>
+            This bot plays by filling the board left to right
+            </summary>
+        </member>
+        <member name="M:Connect4.Core.Bots.FillupBot.Connect4#Core#Bots#IBot#MakeMove(Connect4.Core.Models.Game)">
+            <summary>
+            Make our move and return the amended game
+            </summary>
+            <param name="game"></param>
+        </member>
+        <member name="T:Connect4.Core.Bots.RandomBot">
+            <summary>
+            This bot plays completely at random
+            </summary>
+        </member>
+        <member name="M:Connect4.Core.Bots.RandomBot.Connect4#Core#Bots#IBot#MakeMove(Connect4.Core.Models.Game)">
+            <summary>
+            Make our move and return the amended game
+            </summary>
+            <param name="game"></param>
+        </member>
+        <member name="M:Connect4.Core.Controllers.GameStateController.GET(System.Guid)">
+             <summary>
+                 Called by the client to get the current state of the game.  
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 GET api/GameState/abcedf
+            
+             </remarks>
+             <returns>The state of the game</returns>
+             <response code="200">Success</response>
+             <response code="404">The player does not exist</response>
+        </member>
+        <member name="M:Connect4.Core.Controllers.MakeMoveController.POST(Connect4.Core.ViewModels.MakeMoveViewModel)">
+             <summary>
+                 Play a move in the specified column
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST api/MakeMove
+                 {
+                     "PlayerID" : "abcde..."
+                     "Password" : "secret"
+                     "ColumnNumber" : 3
+                 }
+            
+             </remarks>
+             <returns>The state of the game</returns>
+             <response code="200">Success</response>
+             <response code="404">The player does not exist</response>
+        </member>
+        <member name="M:Connect4.Core.Controllers.NewGameController.POST(Connect4.Core.ViewModels.NewGameViewModel)">
+             <summary>
+                 Start a new game still against the same opponent.
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST api/NewGame
+                 
+                 {
+                     "playerID" : "abcdef...",
+                 }
+            
+             </remarks>
+             <returns>The ID of your player</returns>
+             <response code="200">Success</response>
+        </member>
+        <member name="M:Connect4.Core.Controllers.RegisterController.POST(Connect4.Core.ViewModels.RegisterTeamViewModel)">
+             <summary>
+                 Call this to register your team name.  This call returns your PlayerID which you will need to supply in all other calls
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST api/Register
+                 
+                 {
+                     "teamName" : "David",
+                     "password" : "Secret",
+                 }
+            
+             </remarks>
+             <returns>The ID of your player</returns>
+             <response code="200">Success</response>
+        </member>
+        <member name="M:Connect4.Core.Models.BoardAPI.GetHeightOfColumn(Connect4.Core.Models.CellContent[0:,0:],System.Int32)">
+            <summary>
+            0...
+            </summary>
+            <param name="columnNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Connect4.Core.Models.BoardAPI.IsBoardFull(Connect4.Core.Models.CellContent[0:,0:])">
+            <summary>
+            Are there any spaces left to play?
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Connect4.Core.Models.BoardAPI.WasWinningMove(Connect4.Core.Models.CellContent[0:,0:],System.Int32,System.Boolean)">
+            <summary>
+            Make the move before calling this method
+            </summary>
+            <param name="columnNumber"></param>
+            <param name="isYellow"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Connect4.Core.Models.Game.AsState">
+            <summary>
+            Serialises this game into a string
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Connect4.Core.Models.Game.LoadFromState(System.String)">
+            <summary>
+            Creates a game from the state string
+            </summary>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Connect4.Core.Services.GameCreator.CreateInitialGame(System.Guid)">
+            <summary>
+            Creates the default game for a new player,  which is them playing against the RandomBot
+            </summary>
+            <param name="playerID"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Connect4.Core.ViewModels.RegisterTeamViewModel.TeamName">
+            <summary>
+                The unique name you have picked for your team
+            </summary>
+        </member>
+        <member name="P:Connect4.Core.ViewModels.RegisterTeamViewModel.Password">
+            <summary>
+                The secret password you have picked for your team.
+            </summary>
+        </member>
+    </members>
+</doc>
