@@ -5,8 +5,9 @@
     ViewData["Title"] = "DisplayGame";
 }
 
-<link rel="stylesheet" href="~/css/displayGame.css" />
+<meta http-equiv="refresh" content="5">
 
+<link rel="stylesheet" href="~/css/displayGame.css" />
 
 @switch (Model.ViewModel.CurrentState)
 {
@@ -33,7 +34,7 @@
 <h2>Red Player: @ViewData["RedPlayer"]</h2>
 <h2>Yellow Player: @ViewData["YellowPlayer"]</h2>
 
-<table class="table fixed" style="border:dotted">
+<table class="table fixed">
 
     @for (int rowNumber = Game.NUMBER_OF_ROWS - 1; rowNumber >= 0; rowNumber--)
     {

@@ -50,6 +50,18 @@ namespace Connect4.Core
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.Use(async (ctx, next) =>
+            {
+                ctx.Response.Headers.Add("Content-Security-Policy", "default-src 'self';");
+                ctx.Response.Headers.Add("X-Xss-Protection", "1; mode=block"); // Cross-Site Scripting attacks protection
+                ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff"); // Content sniffing protection
+                ctx.Response.Headers.Add("Referrer-Policy", "no-referrer");
+                ctx.Response.Headers.Add("X-Frame-Options", "DENY");
+                await next().ConfigureAwait(false);
+            });
+
+            app.UseStaticFiles();
+
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
