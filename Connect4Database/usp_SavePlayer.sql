@@ -20,15 +20,6 @@ BEGIN
 		SELECT @ID, @TeamName, @Password
 		
 	END
-	ELSE
-	BEGIN
-		-- Team already exists,  double-check the password
-		IF (@ExistingPassword != @Password)
-		BEGIN
-			RAISERROR ('Incorrect Password',16,1)
-			RETURN (-1)  /* Failure */
-		END
-	END
 
 	SELECT @ID AS ID
 END

@@ -11,11 +11,13 @@ namespace Connect4.Core.Controllers
     {
         private readonly Database _database;
         private readonly BotCreator _botCreator;
+        private readonly PasswordHashing _passwordHashing;
 
-        public MakeMoveController(Database database, BotCreator botCreator)
+        public MakeMoveController(Database database, BotCreator botCreator, PasswordHashing passwordHashing)
         {
             _database = database;
             _botCreator = botCreator;
+            _passwordHashing = passwordHashing;
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace Connect4.Core.Controllers
             var player = await _database.LoadPlayer(makeMoveViewModel.PlayerId);
             if (player == null) return BadRequest("The player with this ID does not exist");
 
-            if (player.Password != makeMoveViewModel.Password)
+            if (!_passwordHashing.CompareHashes(makeMoveViewModel.Password, player.Password))
             {
                 return Forbid();
             }

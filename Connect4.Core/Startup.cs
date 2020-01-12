@@ -31,6 +31,7 @@ namespace Connect4.Core
             services.AddSingleton<Services.Database>();
             services.AddSingleton<Services.BotCreator>();
             services.AddSingleton<Services.GameCreator>();
+            services.AddSingleton<Services.PasswordHashing>();
 
             services.AddRazorPages();
 

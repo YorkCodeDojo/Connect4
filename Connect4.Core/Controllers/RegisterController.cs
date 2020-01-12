@@ -12,11 +12,13 @@ namespace Connect4.Core.Controllers
     {
         private readonly Database _database;
         private readonly GameCreator _gameCreator;
+        private readonly PasswordHashing _passwordHashing;
 
-        public RegisterController(Database database, GameCreator gameCreator)
+        public RegisterController(Database database, GameCreator gameCreator, PasswordHashing passwordHashing)
         {
             _database = database;
             _gameCreator = gameCreator;
+            _passwordHashing = passwordHashing;
         }
 
         /// <summary>
@@ -41,11 +43,17 @@ namespace Connect4.Core.Controllers
         {
             // Generate a unique playerID
             var player = new Player(registerTeamViewModel.TeamName);
-            await _database.SavePlayer(player, registerTeamViewModel.Password);
+            var hashedPassword = _passwordHashing.HashPassword(registerTeamViewModel.Password);
+            await _database.SavePlayer(player, hashedPassword);
 
             // Reload the player
             var reloadedPlayer = await _database.LoadPlayer(player.ID);
             if (reloadedPlayer == null) return BadRequest("No player with this ID exists");
+
+            if (!_passwordHashing.CompareHashes(registerTeamViewModel.Password, reloadedPlayer.Password))
+            {
+                return Forbid();
+            }
 
             // Create them a game for them to develop against
             if (!reloadedPlayer.CurrentGameID.HasValue)
