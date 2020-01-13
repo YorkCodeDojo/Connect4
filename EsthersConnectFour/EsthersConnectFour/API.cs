@@ -55,7 +55,7 @@ namespace EsthersConnectFour
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 // Something has gone wrong
-                var errors = httpResponseMessage.Content.ReadAsStringAsync().Result;
+                var errors = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                 throw new Exception(string.Format("Failed to call {0}.   Status {1}.  Reason {2}. {3}", "RegisterTeam", (int)httpResponseMessage.StatusCode, httpResponseMessage.ReasonPhrase, errors));
             }
             else

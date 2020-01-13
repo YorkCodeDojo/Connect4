@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace EsthersConnectFour
 {
@@ -13,6 +14,39 @@ namespace EsthersConnectFour
         public Guid YellowPlayerID { get; set; }
         public Guid RedPlayerID { get; set; }
         public Guid ID { get; set; }
+
+        public bool CounterDropping { get; private set; }
+        public int DropColumn { get; private set; }
+        public DateTime DropStarted { get; private set; }
+        public Brush DroppingColour { get; private set; }
+        public int HighLightedColumn { get; internal set; }
+
+        internal void StartDroppingCounter(Brush droppingColour, int highLightedColumn)
+        {
+            CounterDropping = true;
+            DropColumn = highLightedColumn;
+            DropStarted = DateTime.Now;
+            DroppingColour = droppingColour;
+            HighLightedColumn = -1;
+        }
+
+        internal double UpdateDroppingCounter(int boardHeight, int rowHeight)
+        {
+            var MSpassed = (DateTime.Now - DropStarted).TotalMilliseconds;
+            var dropPerMS = boardHeight / 1000.0;
+            var distanceDropped = MSpassed * dropPerMS;
+            var counterNumber = NumberOfCountersInColumn(DropColumn);
+            var maximumDrop = boardHeight - 70 - (rowHeight * counterNumber);
+
+            if (maximumDrop <= (distanceDropped + 10))
+            {
+                CounterDropping = false;
+                distanceDropped = -1;
+            }
+
+            return distanceDropped;
+        }
+
 
         public Game Clone()
         {
@@ -39,11 +73,24 @@ namespace EsthersConnectFour
             return clone;
         }
 
+        internal bool CanPlay(int column)
+        {
+            for (int row = 0; row < NUMBER_OF_ROWS; row++)
+            {
+                if (Cells[column, row] == CellContent.Empty)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         internal bool Play(int column, CellContent cellContent)
         {
             for (int row = 0; row < NUMBER_OF_ROWS; row++)
             {
-                if (Cells[column,row] == CellContent.Empty)
+                if (Cells[column, row] == CellContent.Empty)
                 {
                     Cells[column, row] = cellContent;
                     return true;
@@ -67,5 +114,7 @@ namespace EsthersConnectFour
 
             return result;
         }
+
+
     }
 }

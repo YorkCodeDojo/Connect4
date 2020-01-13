@@ -24,8 +24,8 @@ namespace EsthersConnectFour
                 return;
             }
 
-            // var url = "https://codedojoconnect4.azurewebsites.net/";
-            var url = "https://localhost:5001/";
+            var url = "https://connect4core.azurewebsites.net/";
+            //var url = "https://localhost:5001/";
             var api = new API(new Uri(url));
             var playerID = await api.RegisterTeam(txtName.Text, "23456236478236");
             var details = new APIDetails

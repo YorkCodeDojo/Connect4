@@ -6,7 +6,6 @@ namespace EsthersConnectFour
 {
     public partial class Form1 : Form
     {
-        private int _droppingCounter;
         private int y = 0;
         private Bitmap _template;
         private Bitmap _layer1Template;
@@ -16,7 +15,9 @@ namespace EsthersConnectFour
         private int _rowHeight;
         private Game _game;
         private bool _weAreRed;
-        private bool _weArePlaying;
+        private Brush _droppingColour;
+        private readonly APIDetails _details;
+        private readonly API _api;
 
         static class Constants
         {
@@ -44,18 +45,9 @@ namespace EsthersConnectFour
 
             _game = await _api.GetGame(_details.PlayerID);
             _weAreRed = _game.RedPlayerID == _details.PlayerID;
-        }
 
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-            if (_game is object)
-            {
-                using (var g = this.CreateGraphics())
-                {
-                    g.TranslateTransform(100, 100);
-                    DrawBoard(g);
-                }
-            }
+            timer1.Interval = 16; //60FPS
+            timer1.Enabled = true;
         }
 
         private Bitmap CreateTemplate()
@@ -80,71 +72,74 @@ namespace EsthersConnectFour
 
                 g.TranslateTransform(100, 100);
 
-                var column = _droppingCounter;
-                var x = column * _columnWidth;
-
-                g.FillEllipse(_droppingColour, x + 40, y, 50, 50);
-
-                var counterNumber = _game.NumberOfCountersInColumn(_droppingCounter);
-                var row = Constants.NumberOfRows - counterNumber;
-
-                DrawBoard(g, column, row);
-
-                myBuffer.Render();
-
-                var increment = 30;
-                var stopAt = _boardHeight - 70 - (_rowHeight * (counterNumber - 1));
-
-                timer1.Enabled = y < stopAt;
-                if (stopAt - y < increment)
-                    y = stopAt;
-                else
-                    y += increment;
-            }
-
-            if (!timer1.Enabled)
-            {
-                if (_weArePlaying)
+                if (_game.CounterDropping)
                 {
-                    _game = await _api.GetGame(_details.PlayerID);
-                    using (var g = this.CreateGraphics())
+                    var y = (int)_game.UpdateDroppingCounter(_boardHeight, _rowHeight);
+                    if (!_game.CounterDropping)
                     {
-                        g.TranslateTransform(100, 100);
-                        DrawBoard(g);
+                        _game.Play(_game.DropColumn, _weAreRed ? CellContent.Red : CellContent.Yellow);
+                        await _api.MakeMove(_details.PlayerID, _game.DropColumn, _details.Password);
+                        _game = await _api.GetGame(_details.PlayerID);  //TODO:  Show other player's counter dropping
+                        _game.HighLightedColumn = -1;
+                    }
+                    else
+                    {
+                        var x = _game.DropColumn * _columnWidth;
+                        g.FillEllipse(_droppingColour, x + 40, y, 50, 50);
                     }
                 }
 
-                switch (_game.CurrentState)
+                DrawBoard(g);
+
+                if (_game.HighLightedColumn > -1)
                 {
-                    case GameState.RedWon:
-                        DisplayMessage($"Red has won. {(_weAreRed ? "Well done" : "Bad Luck")}");
-                        break;
-                    case GameState.YellowWon:
-                        DisplayMessage($"Yellow has won. {(!_weAreRed ? "Well done" : "Bad Luck")}");
-                        break;
-                    case GameState.Draw:
-                        DisplayMessage("It was a draw");
-                        break;
-                    default:
-                        break;
+                    var where = new Rectangle((_game.HighLightedColumn * _columnWidth) + 40,
+                          -Constants.CounterSize / 2,
+                          Constants.CounterSize,
+                          Constants.CounterSize);
+
+                    if (_weAreRed)
+                        g.FillPie(Brushes.Red, where, 0, -180);
+                    else
+                        g.FillPie(Brushes.Yellow, where, 0, -180);
                 }
+
+                CheckForEndGame(g);
+
+                myBuffer.Render();
             }
         }
 
-        private void DisplayMessage(string message)
+        private void CheckForEndGame(Graphics g)
         {
-            using (var g = this.CreateGraphics())
+            switch (_game.CurrentState)
             {
-                var font = new System.Drawing.Font("Segoe UI", 21.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-                g.TranslateTransform((this.ClientSize.Width - 500) / 2, 0);
-                g.FillRectangle(Brushes.DeepPink, 0, 0, 500, 100);
-                var width = g.MeasureString(message, font).Width;
-                var height = g.MeasureString(message, font).Height;
-                g.DrawString(message, font, Brushes.White, (500 - width) / 2, (100 - height) / 2);
+                case GameState.RedWon:
+                    DisplayMessage(g, $"Red has won. {(_weAreRed ? "Well done" : "Bad Luck")}");
+                    break;
+                case GameState.YellowWon:
+                    DisplayMessage(g, $"Yellow has won. {(!_weAreRed ? "Well done" : "Bad Luck")}");
+                    break;
+                case GameState.Draw:
+                    DisplayMessage(g, "It was a draw");
+                    break;
+                default:
+                    break;
             }
         }
 
-        private void DrawBoard(Graphics g, int skipColumn = -1, int skipRow = -1)
+        private void DisplayMessage(Graphics g, string message)
+        {
+            var font = new System.Drawing.Font("Segoe UI", 21.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+            g.ResetTransform(); 
+            g.TranslateTransform((this.ClientSize.Width - 500) / 2, 0);
+            g.FillRectangle(Brushes.DeepPink, 0, 0, 500, 100);
+            var width = g.MeasureString(message, font).Width;
+            var height = g.MeasureString(message, font).Height;
+            g.DrawString(message, font, Brushes.White, (500 - width) / 2, (100 - height) / 2);
+        }
+
+        private void DrawBoard(Graphics g)
         {
             for (int column = 0; column < Constants.NumberOfColumns; column++)
             {
@@ -155,21 +150,18 @@ namespace EsthersConnectFour
 
                     g.DrawImage(_template, x, y, _columnWidth, _rowHeight);
 
-                    if (row != skipRow || column != skipColumn)
+                    switch (_game.Cells[column, Constants.NumberOfRows - row - 1])
                     {
-                        switch (_game.Cells[column, Constants.NumberOfRows - row - 1])
-                        {
-                            case CellContent.Red:
-                                g.FillEllipse(Brushes.Red, x + 40, y + 20, 50, 50);
-                                break;
+                        case CellContent.Red:
+                            g.FillEllipse(Brushes.Red, x + 40, y + 20, 50, 50);
+                            break;
 
-                            case CellContent.Yellow:
-                                g.FillEllipse(Brushes.Yellow, x + 40, y + 20, 50, 50);
-                                break;
+                        case CellContent.Yellow:
+                            g.FillEllipse(Brushes.Yellow, x + 40, y + 20, 50, 50);
+                            break;
 
-                            default:
-                                break;
-                        }
+                        default:
+                            break;
                     }
                 }
             }
@@ -182,81 +174,37 @@ namespace EsthersConnectFour
             layer1Graphics.DrawImage(this.BackgroundImage, new Rectangle(0, 0, ClientSize.Width, ClientSize.Height));
         }
 
-        private async void Form1_Click(object sender, EventArgs e)
+        private void Form1_Click(object sender, EventArgs e)
         {
-            if (_highlightedColumn > -1)
+            if (_game.HighLightedColumn > -1)
             {
+                if (!_game.CanPlay(_game.HighLightedColumn)) return;
+
                 if (_weAreRed)
                 {
                     _droppingColour = Brushes.Red;
-                    if (!_game.Play(_highlightedColumn, CellContent.Red)) return;
                 }
                 else
                 {
                     _droppingColour = Brushes.Yellow;
-                    if (!_game.Play(_highlightedColumn, CellContent.Yellow)) return;
                 }
 
-                await _api.MakeMove(_details.PlayerID, _highlightedColumn, _details.Password);
-
-                _droppingCounter = _highlightedColumn;
-                _highlightedColumn = -1;
-                y = -50;
-                _weArePlaying = true;
-                timer1.Interval = 50;
-                timer1.Enabled = true;
+                _game.StartDroppingCounter(_droppingColour, _game.HighLightedColumn);
             }
         }
 
-        private int _highlightedColumn = -1;
-        private Brush _droppingColour;
-        private readonly APIDetails _details;
-        private readonly API _api;
-
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (timer1.Enabled) return;
+            if (_game.CounterDropping) return;
 
             if (_columnWidth > 0 && e.Y <= 100 && e.X >= 100 && (e.X - 100) / _columnWidth < 7)
             {
                 var columnNumber = (e.X - 100) / _columnWidth;
-                if (_highlightedColumn != columnNumber)
-                {
-                    using (var g = this.CreateGraphics())
-                    {
-                        g.TranslateTransform(100, 100);
-
-                        if (_highlightedColumn > -1)
-                        {
-                            var copyFrom = new RectangleF(100 + (_highlightedColumn * _columnWidth), 0, _columnWidth, 100);
-                            var backgroundBitMap = _layer1Template.Clone(copyFrom, _layer1Template.PixelFormat);
-                            g.DrawImage(backgroundBitMap, _highlightedColumn * _columnWidth, -100);
-                        }
-
-                        var where = new Rectangle((columnNumber * _columnWidth) + 40,
-                                                  -Constants.CounterSize / 2,
-                                                  Constants.CounterSize,
-                                                  Constants.CounterSize);
-
-                        if (_weAreRed)
-                            g.FillPie(Brushes.Red, where, 0, -180);
-                        else
-                            g.FillPie(Brushes.Yellow, where, 0, -180);
-
-                        _highlightedColumn = columnNumber;
-                    }
-                }
+                _game.HighLightedColumn = columnNumber;
             }
-            else if (_highlightedColumn > -1)
+            else
             {
-                using (var g = this.CreateGraphics())
-                {
-                    g.TranslateTransform(100, 100);
-                    var copyFrom = new RectangleF(100 + (_highlightedColumn * _columnWidth), 0, _columnWidth, 100);
-                    var backgroundBitMap = _layer1Template.Clone(copyFrom, _layer1Template.PixelFormat);
-                    g.DrawImage(backgroundBitMap, _highlightedColumn * _columnWidth, -100);
-                    _highlightedColumn = -1;
-                }
+                _game.HighLightedColumn = -1;
             }
         }
     }
