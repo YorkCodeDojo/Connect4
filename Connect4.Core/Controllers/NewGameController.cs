@@ -28,7 +28,7 @@ namespace Connect4.Core.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST api/NewGame
+        ///     POST /api/NewGame
         ///     
         ///     {
         ///         "playerID" : "abcdef...",

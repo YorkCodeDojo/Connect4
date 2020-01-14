@@ -17,6 +17,7 @@ namespace Connect4.ExampleBot
 
         private const int ROWS = 6;
         private const int COLUMNS = 7;
+        private static API _api;
 
         private static int WorkOutMove(Game game, Guid playerID)
         {
@@ -363,17 +364,17 @@ namespace Connect4.ExampleBot
             return (game.Cells[column, ROWS - 1] == CellContent.Empty);
         }
 
-        private static void MakeMove(Game game, Guid playerID, string serverURL)
+        private static async Task MakeMove(API api, Game game, Guid playerID)
         {
             var columnToPlayIn = WorkOutMove(game, playerID);
-            API.MakeMove(playerID, serverURL, columnToPlayIn, teamPassword);
+            await api.MakeMove(playerID, columnToPlayIn, teamPassword);
 
             //Console.WriteLine("Press to play");
             //Console.ReadKey(true);
         }
 
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
 
             var testGame = new Game();
@@ -390,7 +391,8 @@ namespace Connect4.ExampleBot
             // First stage is to register your team name.  This gives
             // you back a TeamID which you need to use in all following
             // class.
-            var playerID = API.RegisterTeam(teamName, teamPassword, serverURL);
+            _api = new API(new Uri(serverURL));
+            var playerID = await _api.RegisterTeam(teamName, teamPassword);
             Console.WriteLine($"PlayerID is {playerID}");
 
 
@@ -398,7 +400,7 @@ namespace Connect4.ExampleBot
             var gameIsComplete = false;
             while (!gameIsComplete)
             {
-                var game = API.GetGame(playerID, serverURL);
+                var game = await _api.GetGame(playerID);
 
                 switch (game.CurrentState)
                 {
@@ -415,14 +417,14 @@ namespace Connect4.ExampleBot
                     case GameState.RedToPlay:
                         if (game.RedPlayerID == playerID)
                         {
-                            MakeMove(game, playerID, serverURL);
+                            await MakeMove(_api, game, playerID);
                         }
                         break;
 
                     case GameState.YellowToPlay:
                         if (game.YellowPlayerID == playerID)
                         {
-                            MakeMove(game, playerID, serverURL);
+                            await MakeMove(_api, game, playerID);
                         }
                         break;
 

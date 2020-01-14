@@ -26,7 +26,7 @@ namespace Connect4.Core.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST api/MakeMove
+        ///     POST /api/MakeMove
         ///     {
         ///         "PlayerID" : "abcde..."
         ///         "Password" : "secret"

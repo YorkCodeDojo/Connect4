@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F5792DBC-A6BC-4295-A604-730A830C8CDB}</ProjectGuid>
+    <ProjectGuid>{D23AC326-B0C5-4D5D-96FA-21D6DB4F8653}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Connect4.ExampleBot</RootNamespace>
@@ -53,7 +53,6 @@
   <ItemGroup>
     <Compile Include="API.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="HttpClientExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

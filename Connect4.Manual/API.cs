@@ -1,32 +1,38 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Connect4.ExampleBot
 {
-    internal static class API
+    public class API
     {
+        private readonly HttpClient _httpClient;
+
+        public API(Uri serverUri)
+        {
+            _httpClient = new HttpClient
+            {
+                BaseAddress = serverUri
+            };
+        }
         /// <summary>
         /// Get the current state of the game
         /// </summary>
         /// <param name="playerID"></param>
-        /// <param name="serverURL"></param>
         /// <returns></returns>
-        internal static Game GetGame(Guid playerID, string serverURL)
+        internal async Task<Game> GetGame(Guid playerID)
         {
-            var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(serverURL);
-
-            var httpResponseMessage = httpClient.GetAsync($"api/GameState?playerID={playerID}").Result;
+            var httpResponseMessage = await _httpClient.GetAsync($"/api/GameState/{playerID}");
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 // Something has gone wrong
-                var errors = httpResponseMessage.Content.ReadAsStringAsync().Result;
+                var errors = await httpResponseMessage.Content.ReadAsStringAsync();
                 throw new Exception(string.Format("Failed to call {0}.   Status {1}.  Reason {2}. {3}", "GameState", (int)httpResponseMessage.StatusCode, httpResponseMessage.ReasonPhrase, errors));
             }
             else
             {
                 // All good
-                var result = httpResponseMessage.Content.ReadAsAsync<Game>().Result;
+                var result = await httpResponseMessage.Content.ReadAsJsonAsync<Game>();
                 return result;
             }
         }
@@ -36,14 +42,16 @@ namespace Connect4.ExampleBot
         /// </summary>
         /// <param name="TeamName"></param>
         /// <param name="teamPassword"></param>
-        /// <param name="serverURL"></param>
         /// <returns></returns>
-        internal static Guid RegisterTeam(string TeamName, string teamPassword, string serverURL)
+        internal async Task<Guid> RegisterTeam(string teamName, string teamPassword)
         {
-            var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(serverURL);
+            var data = new
+            {
+                TeamName = teamName,
+                Password = teamPassword,
+            };
 
-            var httpResponseMessage = httpClient.PostAsync($"api/Register?teamName={TeamName}&password={teamPassword}", null).Result;
+            var httpResponseMessage = await _httpClient.PostAsJsonAsync($"/api/Register", data).ConfigureAwait(false);
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 // Something has gone wrong
@@ -53,28 +61,30 @@ namespace Connect4.ExampleBot
             else
             {
                 // All good
-                var result = httpResponseMessage.Content.ReadAsAsync<string>().Result;
-                return new Guid(result);
+                var result = await httpResponseMessage.Content.ReadAsJsonAsync<Guid>().ConfigureAwait(false);
+                return result;
             }
-
         }
 
         /// <summary>
         /// Plays a move.  ColumnNumber should be between 0 and 6
         /// </summary>
         /// <param name="playerID"></param>
-        /// <param name="serverURL"></param>
         /// <param name="columnNumber"></param>
-        internal static void MakeMove(Guid playerID, string serverURL, int columnNumber, string teamPassword)
+        internal async Task MakeMove(Guid playerID, int columnNumber, string teamPassword)
         {
-            var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(serverURL);
+            var data = new
+            {
+                playerID = playerID,
+                columnNumber = columnNumber,
+                password = teamPassword
+            };
 
-            var httpResponseMessage = httpClient.PostAsync($"api/MakeMove?playerID={playerID}&columnNumber={columnNumber}&password={teamPassword}", null).Result;
+            var httpResponseMessage = await _httpClient.PostAsJsonAsync($"/api/MakeMove", data);
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 // Something has gone wrong
-                var errors = httpResponseMessage.Content.ReadAsStringAsync().Result;
+                var errors = await httpResponseMessage.Content.ReadAsStringAsync();
                 throw new Exception(string.Format("Failed to call {0}.   Status {1}.  Reason {2}. {3}", "MakeMove", (int)httpResponseMessage.StatusCode, httpResponseMessage.ReasonPhrase, errors));
             }
         }
@@ -84,21 +94,20 @@ namespace Connect4.ExampleBot
         /// however be swapped (red => yellow and yellow => red)
         /// </summary>
         /// <param name="playerID"></param>
-        /// <param name="serverURL"></param>
-        internal static void NewGame(Guid playerID, string serverURL)
+        internal async Task NewGame(Guid playerID)
         {
-            var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(serverURL);
+            var data = new
+            {
+                playerId = playerID,
+            };
 
-            var httpResponseMessage = httpClient.PostAsync($"api/NewGame?playerID={playerID}", null).Result;
+            var httpResponseMessage = await _httpClient.PostAsJsonAsync($"/api/NewGame", data).ConfigureAwait(false);
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 // Something has gone wrong
                 var errors = httpResponseMessage.Content.ReadAsStringAsync().Result;
                 throw new Exception(string.Format("Failed to call {0}.   Status {1}.  Reason {2}. {3}", "NewGame", (int)httpResponseMessage.StatusCode, httpResponseMessage.ReasonPhrase, errors));
             }
-
         }
-
     }
 }

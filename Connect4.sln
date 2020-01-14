@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4", "Connect4\Connect4.csproj", "{F724EDE3-F2B4-496C-9724-B77F18036A56}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4.AlphaBeta", "Connect4.AlphaBeta\Connect4.AlphaBeta.csproj", "{BAB54F01-B14F-466E-B75D-A69E70737F43}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connect4.MonteCarlo", "Connect4.MonteCarlo\Connect4.MonteCarlo.csproj", "{53F0D56F-E55C-4CEE-9F96-52E52F3B7386}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EsthersConnectFour", "EsthersConnectFour\EsthersConnectFour\EsthersConnectFour.csproj", "{6CD14D9D-07B7-4433-AAEA-B1240E90EC25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,8 +61,15 @@ Global
 		{53F0D56F-E55C-4CEE-9F96-52E52F3B7386}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53F0D56F-E55C-4CEE-9F96-52E52F3B7386}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53F0D56F-E55C-4CEE-9F96-52E52F3B7386}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CD14D9D-07B7-4433-AAEA-B1240E90EC25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CD14D9D-07B7-4433-AAEA-B1240E90EC25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CD14D9D-07B7-4433-AAEA-B1240E90EC25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CD14D9D-07B7-4433-AAEA-B1240E90EC25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D923F1E5-36E6-46C0-927C-F4B908239F88}
 	EndGlobalSection
 EndGlobal

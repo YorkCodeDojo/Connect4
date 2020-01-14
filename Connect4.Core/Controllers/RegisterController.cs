@@ -27,7 +27,7 @@ namespace Connect4.Core.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST api/Register
+        ///     POST /api/Register
         ///     
         ///     {
         ///         "teamName" : "David",
@@ -48,7 +48,11 @@ namespace Connect4.Core.Controllers
 
             // Reload the player
             var reloadedPlayer = await _database.LoadPlayer(player.ID);
-            if (reloadedPlayer == null) return BadRequest("No player with this ID exists");
+            if (reloadedPlayer == null)
+            {
+                var details = new ValidationProblemDetails { Detail = $"No player with the ID {player.ID} exists" };
+                return ValidationProblem(details);
+            }
 
             if (!_passwordHashing.CompareHashes(registerTeamViewModel.Password, reloadedPlayer.Password))
             {

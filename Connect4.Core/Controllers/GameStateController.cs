@@ -25,7 +25,7 @@ namespace Connect4.Core.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     GET api/GameState/abcedf
+        ///     GET /api/GameState/abcedf
         ///
         /// </remarks>
         /// <returns>The state of the game</returns>

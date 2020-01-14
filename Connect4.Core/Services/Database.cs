@@ -98,7 +98,7 @@ namespace Connect4.Core.Services
             }
             return result;
         }
-        public async Task<Game> LoadGame(Guid gameID)
+        public async Task<Game?> LoadGame(Guid gameID)
         {
             using (var cn = new SqlConnection(_settings.ConnectionString))
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Connect4.ExampleBot
 {
@@ -14,7 +15,7 @@ namespace Connect4.ExampleBot
         //private const string serverURL = "http://yorkdojoconnect4.azurewebsites.net/";
         private const string serverURL = "http://localhost:55011/";
 
-        private static void MakeMove(Game game, Guid playerID, string serverURL)
+        private static async Task MakeMove(API api, Game game, Guid playerID)
         {
 
             // Display the board
@@ -60,25 +61,26 @@ namespace Connect4.ExampleBot
                 var columnNumber = Console.ReadKey();
                 if (int.TryParse(columnNumber.KeyChar.ToString(), out c))
                 {
-                    API.MakeMove(playerID, serverURL, c, teamPassword);
+                    await api.MakeMove(playerID, c, teamPassword);
                 }
             }
         }
 
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             // First stage is to register your team name.  This gives
             // you back a TeamID which you need to use in all following
             // class.
-            var playerID = API.RegisterTeam(teamName, teamPassword, serverURL);
+            var api = new API(new Uri(serverURL));
+            var playerID = await api.RegisterTeam(teamName, teamPassword);
             Console.WriteLine($"PlayerID is {playerID}");
 
             // This is the main game loop
             var gameIsComplete = false;
             while (!gameIsComplete)
             {
-                var game = API.GetGame(playerID, serverURL);
+                var game = await api.GetGame(playerID);
 
                 switch (game.CurrentState)
                 {
@@ -97,7 +99,7 @@ namespace Connect4.ExampleBot
                         {
                             try
                             {
-                                MakeMove(game, playerID, serverURL);
+                                await MakeMove(api, game, playerID);
                             }
                             catch (Exception e)
                             {
@@ -112,7 +114,7 @@ namespace Connect4.ExampleBot
                         {
                             try
                             {
-                                MakeMove(game, playerID, serverURL);
+                                await MakeMove(api, game, playerID);
                             }
                             catch (Exception e)
                             {
